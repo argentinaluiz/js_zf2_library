@@ -1,3 +1,5 @@
 /vendor/
 /data/
 /module/
+/config/autoload/
+/public/
