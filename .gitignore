@@ -7,3 +7,4 @@
 /composer.phar
 /init_autoloader.php
 /nbproject/
+/config/application.config.php
