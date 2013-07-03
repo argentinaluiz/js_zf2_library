@@ -17,6 +17,7 @@ return array(
             'log' => function($sm) {
                 $config = $sm->getServiceLocator()->get('Config');
                 $pathLog = $config['js_library']['path_log'];
+                
                 $log = new \JS\Plugin\Log();
                 $writer = 'production' == getenv('APPLICATION_PATH') ?
                         new \Zend\Log\Writer\Stream(getenv('APPLICATION_PATH') . '/' . $pathLog) :
