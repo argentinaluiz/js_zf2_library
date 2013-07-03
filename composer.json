@@ -1,0 +1,17 @@
+{
+    "name": "zendframework/skeleton-application",
+    "description": "Skeleton Application for ZF2",
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "framework",
+        "zf2"
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.3.3",
+        "zendframework/zendframework": ">2.1.3",
+        "zendframework/zendframework1": "1.12",
+        "doctrine/Doctrine-ORM-Module": "dev-master",
+        "firephp/firephp-core": "dev-master"
+    }
+}
