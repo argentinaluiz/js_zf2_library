@@ -1,1 +1,2 @@
-js_zf2_library
+JS Zf2 Library
+==============
