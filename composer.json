@@ -1,11 +1,20 @@
 {
-    "name": "zendframework/skeleton-application",
-    "description": "Skeleton Application for ZF2",
+    "name": "argentinaluiz/js_zf2_library",
+    "description": "Library based in Zf2 and Doctrine",
     "license": "BSD-3-Clause",
     "keywords": [
         "framework",
-        "zf2"
+        "zf2",
+        "doctrine"
     ],
+    "authors": [
+        {
+            "name": "Luiz Carlos",
+            "email": "argentinaluiz@gmail.com",
+            "homepage": "https://github.com/argentinaluiz"
+        }
+    ],
+    "homepage": "https://github.com/argentinaluiz/js_zf2_library",
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.3.3",
