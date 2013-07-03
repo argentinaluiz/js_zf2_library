@@ -3,4 +3,6 @@
 /module/
 /config/autoload/
 /public/
-/view/
+/composer.lock
+/composer.phar
+/init_autoloader.php
