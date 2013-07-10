@@ -19,8 +19,8 @@ return array(
                 $pathLog = $config['js_library']['path_log'];
                 
                 $log = new \JS\Plugin\Log();
-                $writer = 'production' == getenv('APPLICATION_PATH') ?
-                        new \Zend\Log\Writer\Stream(getenv('APPLICATION_PATH') . '/' . $pathLog) :
+                $writer = 'production' == getenv('APPLICATION_ENV') ?
+                        new \Zend\Log\Writer\Stream(getcwd() . '/' . $pathLog) :
                         new Zend\Log\Writer\FirePhp();
                 $logger = new \Zend\Log\Logger();
                 $logger->addWriter($writer);
