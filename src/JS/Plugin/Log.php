@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Plugin baseado em Zend Framework 2 para armazenar logs
+ * @author Luiz Carlos <argentinaluiz@gmail.com>
+ */
+
 namespace JS\Plugin;
 
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
@@ -7,14 +12,18 @@ use Zend\Log\Logger;
 
 class Log extends AbstractPlugin {
 
+    /**
+     * @var \Zend\Mvc\MvcEvent
+     */
     private $event;
 
     /**
-     * @return \Zend\Log\Logger
+     * @var \Zend\Log\Logger
      */
     private $log;
 
     /**
+     * Cria o log,com a excecao e a prioridade(ERR, INFO...)
      * @param \Exception $ex
      * @param mixed $priority
      */
@@ -36,7 +45,9 @@ class Log extends AbstractPlugin {
             } catch (\Exception $exc) {
                 
             }
+
             $log->log($priority, $ex->getMessage());
+
             if (getenv('APPLICATION_ENV') == 'production') {
                 if ($params)
                     $log->log($priority, print_r($params, true));
@@ -50,11 +61,16 @@ class Log extends AbstractPlugin {
         }
     }
 
+    /**
+     * Atribuir log
+     * @param \Zend\Log\Logger
+     */
     public function setLog($log) {
         $this->log = $log;
     }
 
     /**
+     * Pegar log
      * @return \Zend\Log\Logger
      */
     private function getLog() {

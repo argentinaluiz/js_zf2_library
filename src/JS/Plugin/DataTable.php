@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Plugin baseado em Zend Framework 2 para verificar as colunas de uma tabela
+ * para ser ordenada a consulta no banco de dados
+ * @link http://datatables.net/examples/data_sources/server_side.html
+ * @author Luiz Carlos <argentinaluiz@gmail.com>
+ */
+
 namespace JS\Plugin;
 
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
@@ -8,7 +15,19 @@ class DataTable extends AbstractPlugin {
 
     private $event;
 
-    public function getOrderBy($colunas) {
+    /**
+     * @param array $name Array com as colunas da tabela em respectiva ordem.
+     * Exemplo:
+     * $colunas=array(
+     * 'nome',
+     * 'sobrenome',
+     * 'cidade'
+     * )
+     * No Data Table foi passado que somente sera ordernado pela coluna nome e sobrenome.
+     * 
+     * $retorno=array('nome' => 'ASC','sobrenome' => 'ASC')
+     */
+    public function getOrderBy($colunas = array()) {
 
         $params = $this->getController()->plugin('params');
         $sOrder = array();

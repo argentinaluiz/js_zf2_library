@@ -1,36 +1,51 @@
 <?php
 
+/**
+ * Plugin baseado em Zend Framework 2 para enviar respostas
+ * html, 
+ * e array de consultas
+ * para ser ordenada a consulta no banco de dados
+ * @link http://datatables.net/examples/data_sources/server_side.html
+ * @author Luiz Carlos <argentinaluiz@gmail.com>
+ */
+
 namespace JS\Plugin;
 
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 use Zend\Json\Encoder;
 
-class Msg extends AbstractPlugin {
+class JSResponse extends AbstractPlugin {
 
     private $event;
 
-    //put your code here
-    public function msgHtml($msg) {
-        $this->getEvent()->
-                getResponse()->
-                getHeaders()->
-                addHeaders(array(
-                    'Content-Type' => 'text/html'
-                ))->
-                setContent($msg);
+    public function html($msg) {
+        $this->getController();
+        $response = $this->getEvent()->getResponse();
+        $response->getHeaders()
+                ->addHeaders(
+                        array(
+                            'Content-Type' => 'text/html'
+                        )
+                )
+                ->setContent($msg);
+        return $response;
     }
 
-    public function msgJson(array $array) {
+    public function json(array $array) {
         $json = Encoder::encode($array);
-        $this->getEvent()->
-                getResponse()->
-                getHeaders()->
-                addHeaders(array(
-                    'Content-Type' => 'text/json'
-                ))->setContent($json);
+        $response = $this->getEvent()->
+                getResponse();
+        $response->getHeaders()
+                ->addHeaders(
+                        array(
+                            'Content-Type' => 'text/json'
+                        )
+                )
+                ->setContent($json);
+        return $response;
     }
 
-    public function msgError($msg, $include_formatting = true) {
+    public function error($msg, $template = \JS\Template\Messages\MessageFactory::MESSAGE_BOOTSTRAP) {
         $response = $this->getEvent()->
                 getResponse()->
                 setStatusCode(400);
@@ -38,15 +53,8 @@ class Msg extends AbstractPlugin {
                 addHeaders(array(
                     'Content-Type' => 'text/html'
         ));
-        if ($include_formatting)
-            $response->setContent(
-                    "<div class='alert alert-error' style='margin-top:10px'>" .
-                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' .
-                    $msg .
-                    "</div>"
-            );
-        else
-            $response->setContent($msg);
+        $response->setContent(\JS\Template\Messages\MessageFactory::message($msg, $template, \JS\Template\Messages\MessageInterface::ERROR));
+        return $response;
     }
 
     /**
