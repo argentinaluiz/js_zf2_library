@@ -23,7 +23,7 @@ return array(
                     throw new \Exception("Especique o arquivo para armazenar o log");
                 $log = new \JS\Plugin\Log();
                 $writer = 'production' == getenv('APPLICATION_ENV') ?
-                        new \Zend\Log\Writer\Stream(getcwd() . '/' . $pathLog) :
+                        new \Zend\Log\Writer\Stream($pathLog) :
                         new Zend\Log\Writer\FirePhp();
                 $logger = new \Zend\Log\Logger();
                 $logger->addWriter($writer);
