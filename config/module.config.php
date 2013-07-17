@@ -2,7 +2,7 @@
 
 return array(
     'js_library' => array(
-        'path_log' => 'data/log/app.log',
+        'path_log' => '',
         'error_exception' => 'error/errorcustom',
         'ajax_exception' => 'error/errorcustomajax.phtml',
         'js_error_manager' => true
@@ -19,7 +19,8 @@ return array(
             'jsLog' => function($sm) {
                 $config = $sm->getServiceLocator()->get('Config');
                 $pathLog = $config['js_library']['path_log'];
-
+                if (empty($pathLog))
+                    throw new \Exception("Especique o arquivo para armazenar o log");
                 $log = new \JS\Plugin\Log();
                 $writer = 'production' == getenv('APPLICATION_ENV') ?
                         new \Zend\Log\Writer\Stream(getcwd() . '/' . $pathLog) :
