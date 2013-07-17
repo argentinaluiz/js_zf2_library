@@ -32,7 +32,7 @@ class Module {
                 }
         );
         
-        if (!$config['firephp_disabled']) {
+       /* if (!$config['firephp_disabled']) {
             set_error_handler(
                     function ($severity, $message, $filename, $lineno) use ($e) {
                         if (error_reporting() == 0) {
@@ -82,7 +82,7 @@ class Module {
                             exit();
                         }
                     });
-        }
+        }*/
     }
 
     public function getConfig() {

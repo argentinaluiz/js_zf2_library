@@ -25,6 +25,7 @@ class JSMessage extends AbstractPlugin {
 
     public function __invoke($type = MessageFactoryInterface::MESSAGE_BOOTSTRAP) {
         $this->type = $type;
+        return $this;
     }
 
     public function message($msg, $priority = null) {
@@ -88,6 +89,14 @@ class JSMessage extends AbstractPlugin {
         $newArray = array();
         foreach ($array as $value)
             $newArray[$value] = array();
+    }
+
+    public function getType() {
+        return $this->type;
+    }
+
+    public function setType($type) {
+        $this->type = $type;
     }
 
 }

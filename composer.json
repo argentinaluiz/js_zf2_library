@@ -1,10 +1,10 @@
 {
-    "name": "zendframework/skeleton-application",
-    "description": "Skeleton Application for ZF2",
-    "license": "BSD-3-Clause",
+    "name": "argentinaluiz/js_zf2_library",
+    "description": "JS Zf2 Library",
     "keywords": [
         "framework",
-        "zf2"
+        "zf2",
+        "doctrine"
     ],
     "minimum-stability": "dev",
     "require": {

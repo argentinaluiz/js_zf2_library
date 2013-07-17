@@ -20,7 +20,7 @@ class Format extends AbstractPlugin {
      * @param \Zend\Form\Form $form
      * @return string HTML
      */
-    public function formatFormErros($form) {
+    public function formErros($form) {
         $msg = "";
         $array_message = $form->getMessages();
         foreach ($array_message as $elemName => $messages) {
@@ -41,7 +41,7 @@ class Format extends AbstractPlugin {
      * @param \Zend\File\Transfer\Adapter\Http Description $adapter
      * @return string HTML
      */
-    public function formatAdapterErros($adapter) {
+    public function adapterErros($adapter) {
         $msg = "";
         $array_message = $adapter->getMessages();
         foreach ($array_message as $message) {
