@@ -17,7 +17,7 @@ class BaseService implements ServiceManagerAwareInterface {
     protected $entityManager;
 
     /**
-     * @var ServerManager
+     * @var \Zend\ServiceManager\ServiceManager
      */
     protected $serviceManager;
 
@@ -106,7 +106,7 @@ class BaseService implements ServiceManagerAwareInterface {
     }
 
     /**
-     * Remove record by id
+     * Remove record by id and flush
      *
      * @param int @id id of an object
      *
@@ -118,10 +118,10 @@ class BaseService implements ServiceManagerAwareInterface {
     }
 
     /**
-     * Update given entity
+     * Merge given entity and flush
      *
-     * @param int @id id of an object
-     *
+     * @param Doctrine\ORM\Mapping\Entity $entity entity to save
+     * @return Doctrine\ORM\Mapping\Entity
      * @return bool
      */
     public function update($entity) {
@@ -131,10 +131,9 @@ class BaseService implements ServiceManagerAwareInterface {
     }
 
     /**
-     * Save given entity
+     * Save given entity and flush
      *
      * @param Doctrine\ORM\Mapping\Entity $entity entity to save
-     *
      * @return Doctrine\ORM\Mapping\Entity
      */
     public function save($entity) {
@@ -181,11 +180,9 @@ class BaseService implements ServiceManagerAwareInterface {
                     throw new \Exception("Algum Registro Selecionado Não Existe" .
                     "<br/>Atualize a Página para Solucionar o Erro!");
                 throw $ex;
-                break;
 
             default :
                 throw $ex;
-                break;
         }
     }
 

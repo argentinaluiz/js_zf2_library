@@ -1,14 +1,14 @@
-<?php if (isset($exception)): ?>
+<?php if (isset($this->exception)): ?>
     <input id="error_system" type="hidden" value="1"/>
     <ul style="list-style: none;margin: 0;padding: 0">
         <li id="errors_message">
-            <?php echo "<strong>Erro no sistema:</strong> " . $exception->getMessage(); ?>
+            <?php echo "<strong>Erro no sistema:</strong> " . $this->exception->getMessage(); ?>
         </li>
         <li id="errors_exception" style="display: none">
-            <?php echo " in file " . $exception->getFile() . ":" . $exception->getLine(); ?>
+            <?php echo " in file " . $this->exception->getFile() . ":" . $this->exception->getLine(); ?>
         </li>
         <li style="display: none">
-            <?php echo $exception->getTraceAsString(); ?>
+            <?php echo $this->exception->getTraceAsString(); ?>
         </li>
     </ul>
 <?php endif; ?>

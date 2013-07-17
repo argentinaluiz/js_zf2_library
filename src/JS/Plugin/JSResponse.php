@@ -19,29 +19,14 @@ class JSResponse extends AbstractPlugin {
     private $event;
 
     public function html($msg) {
-        $this->getController();
         $response = $this->getEvent()->getResponse();
         $response->getHeaders()
                 ->addHeaders(
                         array(
                             'Content-Type' => 'text/html'
                         )
-                )
-                ->setContent($msg);
-        return $response;
-    }
-
-    public function json(array $array) {
-        $json = Encoder::encode($array);
-        $response = $this->getEvent()->
-                getResponse();
-        $response->getHeaders()
-                ->addHeaders(
-                        array(
-                            'Content-Type' => 'text/json'
-                        )
-                )
-                ->setContent($json);
+        );
+        $response->setContent($msg);
         return $response;
     }
 

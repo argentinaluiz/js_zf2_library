@@ -3,9 +3,9 @@
 return array(
     'js_library' => array(
         'path_log' => 'data/log/app.log',
-        'path_error_exception' => __DIR__ . '/../view/error/errorcustom.phtml',
-        'path_error_ajax_exception' => __DIR__ . '/../view/error/errorcustomajax.phtml',
-        'firephp_disabled' => false
+        'error_exception' => 'error/errorcustom',
+        'ajax_exception' => 'error/errorcustomajax.phtml',
+        'js_error_manager' => true
     ),
     'controller_plugins' => array(
         'invokables' => array(
@@ -48,6 +48,9 @@ return array(
     'view_manager' => array(
         'template_path_stack' => array(
             __DIR__ . '/../view',
-        )
+        ),
+        'strategies' => array(
+            'ViewJsonStrategy',
+        ),
     ),
 );

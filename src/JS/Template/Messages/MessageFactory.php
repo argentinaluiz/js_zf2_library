@@ -20,13 +20,12 @@ class MessageFactory implements MessageFactoryInterface {
             case self::MESSAGE_JQUERY:
                 return new JqueryMessage;
                 break;
-            default:
-                return $this;
         }
     }
 
-    public static function message($msg, $type = self::MESSAGE_BOOTSTRAP, $priority = self::ERROR) {
-        return static::create($type)->message($msg, $priority);
+    public static function message($msg, $type = self::MESSAGE_BOOTSTRAP, $priority = MessageInterface::ERROR) {
+        $class = static::create($type);
+        return $class::message($msg, $priority);
     }
 
 }

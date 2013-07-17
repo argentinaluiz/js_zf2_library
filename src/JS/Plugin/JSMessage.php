@@ -21,50 +21,41 @@ class JSMessage extends AbstractPlugin {
      * @string Tipo template da mensagem
      * jquery, boostrap...
      */
-    private $type;
+    private $type = MessageFactoryInterface::MESSAGE_BOOTSTRAP;
 
-    public function __invoke($type = MessageFactoryInterface::MESSAGE_BOOTSTRAP) {
-        $this->type = $type;
+    public function __invoke($type = null) {
+        if ($type != null)
+            $this->type = $type;
         return $this;
     }
 
     public function message($msg, $priority = null) {
         if (!is_array($msg)) {
             $priority = ($priority == null ? \JS\Template\Messages\MessageInterface::ERROR : $priority);
-            return MessageFactory::message($msg, $priority);
+            return MessageFactory::message($msg, $this->type, $priority);
         }
         else
-            return $this->messages($msg, $priority);
+            return $this->messages($msg);
     }
 
-    public function messages(array $msg, $priority = \JS\Template\Messages\MessageInterface::ERROR) {
+    public function messages(array $msgs) {
         $result = "";
-        foreach ($msg as $key => $value) {
-            if (is_array($value)) {
-                $ul = "<ul>";
-                foreach ($value as $message)
-                    $ul.="<li>" . $message . "</li>";
-                $ul = "</ul>";
-                $result = MessageFactory::message($ul, $this->type, $key);
-            } else {
-                $ul = "<ul>";
-                foreach ($value as $message)
-                    $ul.="<li>" . $message . "</li>";
-                $ul = "</ul>";
-                $result = MessageFactory::message($ul, $this->type, $priority);
+        if (count($msgs) > 0) {
+            $ul = "<ul>";
+            foreach ($msgs as $key => $value) {
+                $ul.="<li>" . $value[key($value)] . "</li>";
             }
+            $ul.= "</ul>";
+            $result = MessageFactory::message($ul, $this->type, key($msgs[0]));
         }
         return $result;
     }
 
-    public function messagesComplex(array $msgs, $priority = \JS\Template\Messages\MessageInterface::ERROR) {
+    public function messagesComplex(array $msgs) {
         $arrayMessages = $this->initListPriorityMessages();
         $result = "";
         foreach ($msgs as $key => $value) {
-            if (is_array($value))
-                $arrayMessages[key($value)][] = $value[key($value)];
-            else
-                $arrayMessages[$priority] = $value;
+            $arrayMessages[key($value)][] = $value[key($value)];
         }
 
         foreach ($arrayMessages as $key => $value) {
@@ -76,7 +67,7 @@ class JSMessage extends AbstractPlugin {
                     $ul = "<ul>";
                     foreach ($value as $message)
                         $ul.="<li>" . $message . "</li>";
-                    $ul = "</ul>";
+                    $ul.= "</ul>";
                     $result.=MessageFactory::message($ul, $this->type, $key);
                 }
             }
@@ -85,7 +76,7 @@ class JSMessage extends AbstractPlugin {
     }
 
     private function initListPriorityMessages() {
-        $array = MessageFactory::create()->getListPriorityMessage();
+        $array = MessageFactory::create($this->type)->getListPriorityMessage();
         $newArray = array();
         foreach ($array as $value)
             $newArray[$value] = array();
