@@ -46,34 +46,27 @@ class Module {
         $sharedManager = $e->getApplication()->getEventManager()->getSharedManager();
         $sharedManager->attach('Zend\Mvc\Application', 'dispatch.error', function($e) {
                     if ($e->getParam('exception')) {
-                        if ($e->getApplication()->getRequest()->isXmlHttpRequest()) {
-                            echo $e->getApplication()->getServiceManager()->get("Controller\Plugin\Manager")->
-                                    get('msg')->flashMsgTooltipTb(array(
-                                array('error' => $e->getParam('exception')->getMessage()
-                            )));
+                        ob_clean(); //Limpar a tela de erros do php
+                        header('HTTP/1.1 400 Bad Request');
+                        $exception = $e->getParam('exception');
+                        $sm = $e->getApplication()->getServiceManager();
+                        $config = $sm->get('Config');
+                        $e->getApplication()->getServiceManager()->get('Controller\Plugin\Manager')->get('jsLog')->log($exception, 2);
+                        $viewModel = new \Zend\View\Model\ViewModel(array(
+                            'exception' => $exception
+                        ));
+                        if ($e->getRequest()->isXmlHttpRequest()) {
+                            $viewModel->setTemplate($config['js_library']['error_ajax_exception']);
+                            $e->getApplication()->getServiceManager()->get('ViewRenderer')->render($viewModel);
                         } else {
-                            ob_clean(); //Limpar a tela de erros do php
-                            header('HTTP/1.1 400 Bad Request');
-                            $exception = $e->getParam('exception');
-                            $sm = $e->getApplication()->getServiceManager();
-                            $config = $sm->get('Config');
-                            $e->getApplication()->getServiceManager()->get('Controller\Plugin\Manager')->get('jsLog')->log($exception, 2);
-                            $viewModel = new \Zend\View\Model\ViewModel(array(
-                                'exception' => $exception
-                            ));
-                            if ($e->getRequest()->isXmlHttpRequest()) {
-                                $viewModel->setTemplate($config['js_library']['error_ajax_exception']);
-                                $e->getApplication()->getServiceManager()->get('ViewRenderer')->render($viewModel);
-                            } else {
-                                $viewModel->setTemplate($config['js_library']['error_exception']);
-                                echo $e->getApplication()->getServiceManager()->get('ViewRenderer')->render($viewModel);
-                            }
-                            /*
-                             * Com erros handler o codigo continua a ser executado,
-                             * entao o exit para e so mostra os erros
-                             */
-                            exit();
+                            $viewModel->setTemplate($config['js_library']['error_exception']);
+                            echo $e->getApplication()->getServiceManager()->get('ViewRenderer')->render($viewModel);
                         }
+                        /*
+                         * Com erros handler o codigo continua a ser executado,
+                         * entao o exit para e so mostra os erros
+                         */
+                        exit();
                     }
                 }
         );
