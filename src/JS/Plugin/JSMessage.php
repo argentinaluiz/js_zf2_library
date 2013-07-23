@@ -40,13 +40,22 @@ class JSMessage extends AbstractPlugin {
 
     public function messages(array $msgs) {
         $result = "";
-        if (count($msgs) > 0) {
-            $ul = "<ul>";
-            foreach ($msgs as $key => $value) {
-                $ul.="<li>" . $value[key($value)] . "</li>";
+        $tam = count($msgs);
+        if ($tam > 0) {
+            if ($tam == 1) {
+                if (is_array($msgs[0]))
+                    $result = MessageFactory::message($msgs[0][key($msgs[0])], $this->type, key($msgs[0]));
+                else
+                    $result = MessageFactory::message($msgs[0], $this->type, \JS\Template\Messages\MessageInterface::ERROR);
             }
-            $ul.= "</ul>";
-            $result = MessageFactory::message($ul, $this->type, key($msgs[0]));
+            else {
+                $ul = "<ul>";
+                foreach ($msgs as $key => $value) {
+                    $ul.="<li>" . $value[key($value)] . "</li>";
+                }
+                $ul.= "</ul>";
+                $result = MessageFactory::message($ul, $this->type, key($msgs[0]));
+            }
         }
         return $result;
     }
