@@ -44,7 +44,7 @@ class FormNumberBootstrap extends AbstractHelper {
     }
 
     public function createHTML($helper, $element) {
-        $el = "<div class='control-group%s'>%s" .
+        $el = "<div class='control-group %s'>%s" .
                 "<div class='controls'>" .
                 "<div class='input-prepend'>" .
                 "<span class='add-on'>R$</span>%s" . "</span></div>" .

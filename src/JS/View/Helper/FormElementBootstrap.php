@@ -207,7 +207,7 @@ class FormElementBootstrap extends AbstractHelper {
     }
 
     public function createHTML($helper, $element) {
-        $el = "<div class='control-group%s'>%s" .
+        $el = "<div class='control-group %s'>%s" .
                 "<div class='controls'>%s" .
                 "<span class='help-inline'>%s</span>" .
                 "</div>" .
