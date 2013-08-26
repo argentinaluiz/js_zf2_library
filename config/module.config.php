@@ -17,25 +17,27 @@ return array(
         ),
         'factories' => array(
             'jsLog' => function($sm) {
-                $config = $sm->getServiceLocator()->get('Config');
-                $pathLog = $config['js_library']['path_log'];
-                if (empty($pathLog))
-                    throw new \Exception("Especique o arquivo para armazenar o log");
-                $log = new \JS\Plugin\Log();
-                $writer = 'production' == getenv('APPLICATION_ENV') ?
-                        new \Zend\Log\Writer\Stream($pathLog) :
-                        new Zend\Log\Writer\FirePhp();
-                $logger = new \Zend\Log\Logger();
-                $logger->addWriter($writer);
-                $log->setLog($logger);
-                return $log;
-            },
+        $config = $sm->getServiceLocator()->get('Config');
+        $pathLog = $config['js_library']['path_log'];
+        if (empty($pathLog))
+            throw new \Exception("Especique o arquivo para armazenar o log");
+        $log = new \JS\Plugin\Log();
+        $writer = 'production' == getenv('APPLICATION_ENV') ?
+                new \Zend\Log\Writer\Stream($pathLog) :
+                new Zend\Log\Writer\FirePhp();
+        $logger = new \Zend\Log\Logger();
+        $logger->addWriter($writer);
+        $log->setLog($logger);
+        return $log;
+    },
         ),
     ),
     'validators' => array(
         'invokables' => array(
             'JS\Validator\JSInt' => 'JS\Validator\JSInt',
             'JS\Validator\JSFloat' => 'JS\Validator\JSFloat',
+            'JS\Validator\Cpf' => 'JS\Validator\Cpf',
+            'JS\Validator\Cnpj' => 'JS\Validator\Cnpj',
         )
     ),
     'view_helpers' => array(
