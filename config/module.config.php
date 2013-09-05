@@ -4,7 +4,7 @@ return array(
     'js_library' => array(
         'path_log' => '',
         'error_exception' => 'error/errorcustom',
-        'ajax_exception' => 'error/errorcustomajax.phtml',
+        'error_ajax_exception' => 'error/errorcustomajax.phtml',
         'js_error_manager' => true
     ),
     'controller_plugins' => array(
