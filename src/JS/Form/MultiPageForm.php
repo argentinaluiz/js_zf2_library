@@ -42,7 +42,7 @@ abstract class MultiPageForm extends Form implements MultiPageFormInterface {
         if (!$isLastForm)
             $this->addSubmitButton($subForm);
         else
-            $this->addCancelButton($subForm);
+            $this->addFinishButton($subForm);
         $this->addCancelButton($subForm);
         return $subForm;
     }
