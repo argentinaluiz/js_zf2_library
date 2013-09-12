@@ -101,7 +101,7 @@ class BaseService implements ServiceManagerAwareInterface {
      *
      * @return Doctrine\ORM\Mapping\Entity
      */
-    public function findObject($id) {
+    protected function findObject($id) {
         return $this->entityManager->find($this->entityName, $id);
     }
 
@@ -112,7 +112,7 @@ class BaseService implements ServiceManagerAwareInterface {
      *
      * @return bool
      */
-    public function remove($entity) {
+    protected function remove($entity) {
         $this->getEntityManager()->remove($entity);
         $this->getEntityManager()->flush();
     }
@@ -124,7 +124,7 @@ class BaseService implements ServiceManagerAwareInterface {
      * @return Doctrine\ORM\Mapping\Entity
      * @return bool
      */
-    public function update($entity) {
+    protected function update($entity) {
         $entity = $this->getEntityManager()->merge($entity);
         $this->getEntityManager()->flush();
         return $entity;
@@ -136,7 +136,7 @@ class BaseService implements ServiceManagerAwareInterface {
      * @param Doctrine\ORM\Mapping\Entity $entity entity to save
      * @return Doctrine\ORM\Mapping\Entity
      */
-    public function save($entity) {
+    protected function save($entity) {
         $this->getEntityManager()->persist($entity);
         $this->getEntityManager()->flush();
         return $entity;
@@ -148,13 +148,13 @@ class BaseService implements ServiceManagerAwareInterface {
      *
      * @return void
      */
-    public function recoverEntityManager() {
+    protected function recoverEntityManager() {
         $this->setEntityManager(\Doctrine\ORM\EntityManager::create(
                         $this->getEntityManager()->getConnection(), $this->getEntityManager()->getConfiguration()
         ));
     }
 
-    public function begin() {
+    protected function begin() {
         if ($this->hasTransaction()) {
             $this->entityManager->getConnection()->rollback();
             throw new \Exception("There is no nested transaction support!");
@@ -168,7 +168,7 @@ class BaseService implements ServiceManagerAwareInterface {
         }
     }
 
-    public function handleException(\Exception $ex) {
+    protected function handleException(\Exception $ex) {
         $this->rollback();
         $this->close();
         switch ($ex) {
@@ -186,7 +186,7 @@ class BaseService implements ServiceManagerAwareInterface {
         }
     }
 
-    public function commit() {
+    protected function commit() {
         if ($this->hasTransaction()) {
             $this->entityManager->commit();
         }
@@ -195,17 +195,17 @@ class BaseService implements ServiceManagerAwareInterface {
     /**
      * @return boolean
      */
-    public function hasTransaction() {
+    protected function hasTransaction() {
         return $this->entityManager->getConnection()->isTransactionActive();
     }
 
-    public function rollback() {
+    protected function rollback() {
         if ($this->hasTransaction()) {
             $this->entityManager->getConnection()->rollback();
         }
     }
 
-    public function close() {
+    protected function close() {
         if ($this->entityManager->getConnection()->isConnected())
             $this->entityManager->getConnection()->close();
     }
