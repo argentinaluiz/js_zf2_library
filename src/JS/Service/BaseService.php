@@ -20,6 +20,7 @@ class BaseService implements ServiceManagerAwareInterface {
      * @var \Zend\ServiceManager\ServiceManager
      */
     protected $serviceManager;
+    protected $exception;
 
     /**
      * Set up base BaseService options
@@ -28,8 +29,9 @@ class BaseService implements ServiceManagerAwareInterface {
      *
      * @return void
      */
-    public function __construct($em) {
+    public function __construct($em, $exception = null) {
         $this->setEntityManager($em);
+        $this->setException($exception);
     }
 
     /**
@@ -92,6 +94,24 @@ class BaseService implements ServiceManagerAwareInterface {
      */
     public function setEntityName($em) {
         $this->entityName = $em;
+    }
+
+    /**
+     * Get exception default
+     *
+     * @return mixed Exception
+     */
+    public function getException() {
+        return $this->exception;
+    }
+
+    /**
+     * Set exception default
+     *
+     * @param mixed Exception
+     */
+    public function setException($exception) {
+        $this->exception = $exception;
     }
 
     /**
@@ -172,15 +192,8 @@ class BaseService implements ServiceManagerAwareInterface {
         $this->rollback();
         $this->close();
         switch ($ex) {
-
             case ($ex instanceof \PDOException):
-                if ($ex->errorInfo[1] == 1451)
-                    throw new \Exception("Este Registro Está Relacionado com Outros Registros");
-                if ($ex->errorInfo[1] == 1452)
-                    throw new \Exception("Algum Registro Selecionado Não Existe" .
-                    "<br/>Atualize a Página para Solucionar o Erro!");
-                throw $ex;
-
+                throw new $this->exception($ex->getMessage(), 0, $ex);
             default :
                 throw $ex;
         }
