@@ -28,8 +28,8 @@ abstract class MultiPageController extends BaseController implements MultiPageCo
         foreach ($this->getContainer() as $key => $info) {
             $data[$key] = $info;
         }
-        $this->getForm()->setData($data);
-        return $this->getForm()->isValid();
+        $this->getMultiForm()->setData($data);
+        return $this->getMultiForm()->isValid();
     }
 
     /**
@@ -58,7 +58,7 @@ abstract class MultiPageController extends BaseController implements MultiPageCo
         foreach ($this->getPotentialForms() as $name)
             if ($data = $this->params()->fromPost($name, false))
                 if (is_array($data))
-                    return $this->getForm()->get($name);
+                    return $this->getMultiForm()->get($name);
 
         return false;
     }
@@ -67,7 +67,7 @@ abstract class MultiPageController extends BaseController implements MultiPageCo
      * Pega o formulario geral
      * @return \Zend\Form\Form
      */
-    public function getForm() {
+    public function getMultiForm() {
         return $this->multiForm;
     }
 
@@ -81,7 +81,7 @@ abstract class MultiPageController extends BaseController implements MultiPageCo
 
         foreach ($potentialForms as $name)
             if (!in_array($name, $savedForms))
-                return $this->getForm()->get($name);
+                return $this->getMultiForm()->get($name);
 
         return false;
     }
@@ -91,7 +91,7 @@ abstract class MultiPageController extends BaseController implements MultiPageCo
      * @return array
      */
     public function getPotentialForms() {
-        $array = array_keys($this->getForm()->getFieldsets());
+        $array = array_keys($this->getMultiForm()->getFieldsets());
         if (count($array) == 0)
             throw new Exception("Nenhum sub-formulario encontrado.");
         return $array;
@@ -130,7 +130,7 @@ abstract class MultiPageController extends BaseController implements MultiPageCo
      */
     public function subFormIsLast(\Zend\Form\Form $subForm) {
         $nameLastForm = end($this->getPotentialForms());
-        $lastForm = $this->getForm()->get($nameLastForm);
+        $lastForm = $this->getMultiForm()->get($nameLastForm);
         return get_class($subForm) == get_class($lastForm);
     }
 

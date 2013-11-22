@@ -6,7 +6,7 @@ use Zend\Form\Form;
 
 interface MultiPageControllerInteface {
 
-    public function getForm();
+    public function getMultiForm();
 
     public function getContainer();
 
