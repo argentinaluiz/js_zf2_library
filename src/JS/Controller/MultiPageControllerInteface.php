@@ -19,8 +19,6 @@ interface MultiPageControllerInteface {
     public function getNextSubForm();
 
     public function getNamespace();
-    
-    //public function getLastForm();
 
     public function subFormIsValid(Form $subForm, array $data);
 

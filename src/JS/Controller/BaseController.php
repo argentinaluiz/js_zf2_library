@@ -41,12 +41,16 @@ class BaseController extends AbstractActionController {
     public function onDispatch(\Zend\Mvc\MvcEvent $e) {
         parent::onDispatch($e);
     }
-    
+
     /**
      * @return \Zend\View\Renderer\PhpRenderer
      */
     protected function getViewHelper() {
         return $this->getServiceLocator()->get('Zend\View\Renderer\RendererInterface');
+    }
+
+    public function getFormManager() {
+        return $this->getServiceLocator()->get('FormElementManager');
     }
 
 }
