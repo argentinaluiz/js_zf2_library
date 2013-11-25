@@ -158,7 +158,7 @@ abstract class MultiPageController extends BaseController implements MultiPageCo
      * Destroi o container
      */
     public function destroyContainer() {
-        $this->getContainer()->getManager()->destroy();
+        $this->getContainer()->getManager()->getStorage()->clear($this->getNamespace());
         $this->container = null;
     }
 
