@@ -33,8 +33,7 @@ class JSMessage extends AbstractPlugin {
         if (!is_array($msg)) {
             $priority = ($priority == null ? \JS\Template\Messages\MessageInterface::ERROR : $priority);
             return MessageFactory::message($msg, $this->type, $priority);
-        }
-        else
+        } else
             return $this->messages($msg);
     }
 
@@ -49,7 +48,7 @@ class JSMessage extends AbstractPlugin {
                     $result = MessageFactory::message($msgs[0], $this->type, \JS\Template\Messages\MessageInterface::ERROR);
             }
             else {
-                $ul = "<ul>";
+                $ul = "<ul class='list-unstyled'>";
                 foreach ($msgs as $key => $value) {
                     $ul.="<li>" . $value[key($value)] . "</li>";
                 }
@@ -71,9 +70,9 @@ class JSMessage extends AbstractPlugin {
             $tam = count($value);
             if ($tam > 0) {
                 if ($tam == 1)
-                    $result = MessageFactory::message($value[0], $this->type, $key);
+                    $result.= MessageFactory::message($value[0], $this->type, $key);
                 else {
-                    $ul = "<ul>";
+                    $ul = "<ul class='list-unstyled'>";
                     foreach ($value as $message)
                         $ul.="<li>" . $message . "</li>";
                     $ul.= "</ul>";
@@ -89,6 +88,7 @@ class JSMessage extends AbstractPlugin {
         $newArray = array();
         foreach ($array as $value)
             $newArray[$value] = array();
+        return $newArray;
     }
 
     public function getType() {
@@ -100,4 +100,3 @@ class JSMessage extends AbstractPlugin {
     }
 
 }
-

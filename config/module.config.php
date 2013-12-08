@@ -32,6 +32,31 @@ return array(
     },
         ),
     ),
+    'service_manager' => array(
+        'factories' => array(
+            'jstranslator' => function($sm) {
+        $factory = new JS\Translator\TranslatorServiceFactory;
+        $instance = $factory->createService($sm);
+        return $instance;
+    },
+            'JS\Service\BaseService' => function($sm) {
+        $factory = new JS\Service\BaseServiceFactory();
+        $instance = $factory->createService($sm);
+        return $instance;
+    },
+        ),
+    ),
+    'translator' => array(
+        'locale' => 'pt_BR',
+        'translation_file_patterns' => array(
+            array(
+                'type' => 'phparray',
+                'base_dir' => __DIR__ . '/../language',
+                'pattern' => '%s.php',
+                'text_domain' => 'js'
+            ),
+        ),
+    ),
     'validators' => array(
         'invokables' => array(
             'JS\Validator\JSInt' => 'JS\Validator\JSInt',
@@ -42,10 +67,7 @@ return array(
     ),
     'view_helpers' => array(
         'invokables' => array(
-            'formElementBootstrap' => 'JS\View\Helper\FormElementBootstrap',
-            'formNumberBootstrap' => 'JS\View\Helper\FormNumberBootstrap',
             'jsNumberFormat' => 'JS\View\Helper\JSNumberFormat',
-            'jsDateFormat' => 'JS\View\Helper\JSDateFormat',
         )
     ),
     'view_manager' => array(

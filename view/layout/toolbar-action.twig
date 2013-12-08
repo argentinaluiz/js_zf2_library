@@ -1,0 +1,35 @@
+{%
+    set btnSalvar,
+        btnSalvarIncluir,
+        btnSalvarConcluir,
+        btnCancelar,
+        btnExcluir = form.get('btnSalvar'),
+                     form.get('btnSalvarIncluir'),
+                     form.get('btnSalvarConcluir'),
+                     form.get('btnCancelar'),
+                     form.get('btnExcluir')
+%}
+<legend></legend>
+<div class="btn-group">
+    <button type="submit" class="btn btn-primary" {{formButton().createAttributesString(btnSalvarConcluir.getAttributes())|raw}}>
+        {{ (btnSalvarConcluir.getLabel())|raw }}
+    </button>
+    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+        <li>
+            <a {{formButton().createAttributesString(btnSalvar.getAttributes())|raw}} href="#" data-ng-triggersubmit>
+                {{btnSalvar.getLabel()|raw}}
+            </a>
+        </li>
+        <li>
+            <a {{formButton().createAttributesString(btnSalvarIncluir.getAttributes())|raw}} href="#" data-ng-triggersubmit>
+                {{btnSalvarIncluir.getLabel()|raw}}
+            </a>
+        </li>
+    </ul>
+</div>
+{{ (formButton().openTag(btnCancelar) ~ btnCancelar.getLabel() ~ formButton().closeTag())|raw }}
+{{ (formButton().openTag(btnExcluir) ~ btnExcluir.getLabel() ~ formButton().closeTag())|raw }}

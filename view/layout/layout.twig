@@ -1,0 +1,59 @@
+{{ doctype()|raw }}
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        {{ headTitle(translate('Nome Sistema')).setSeparator(' - ').setAutoEscape(false)|raw }}
+        {{ headMeta().appendName('viewport', 'width=device-width, initial-scale=1.0')|raw }}
+
+        <!-- Le styles -->
+        {{ headLink({rel : 'shortcut icon', type : 'image/vnd.microsoft.icon', href : basePath() ~ '/public/img/favicon.ico'})
+            .prependStylesheet(basePath() ~ '/public/css/style.css')
+            .prependStylesheet(basePath() ~ '/public/css/bootstrap.min.css')|raw
+        }}
+
+        <script type="text/javascript">
+            var basePath = "{{ basePath() ~ '/public/js' }}";
+        </script>
+        {% do headScript().setAllowArbitraryAttributes(true) %}
+        {{ headScript().prependFile(basePath() ~ '/public/js/app/bower_components/html5shiv/dist/html5shiv.js',
+                                    'text/javascript',{conditional : 'lt IE 9' })|raw }}
+    </head>
+    <body>
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{ url('home') }}">Nome Sistema</a>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                  {% set partial = ['layout/navigation', 'default'] %}
+                  {% do navigation('navigation').menu().setPartial(partial) %}
+                  {{ navigation('navigation').menu().render()|raw }}
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#"><strong>{# identity().getNome() #}</strong></a></li>
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">Opcoes <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Editar Usuário</a></li>
+                            <li><a href="#">Mudar Senha</a></li>
+                            <li class="divider"></li>
+                            <li><a href="{# url('usuario_auth',{action:'login'}) #}">Sair</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div id='container' class="container">
+            <div class='row'>
+                <div id='menu_left' class='col-md-2'></div>
+                <div id='content' class='col-md-10'>{{ content|raw }}</div>
+            </div>
+        </div>
+    </body>
+</html>

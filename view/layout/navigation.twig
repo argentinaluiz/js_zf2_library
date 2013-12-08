@@ -1,0 +1,44 @@
+{% for page in container %}
+
+    {% set sub= page.getPages() %}
+
+    {% if page.isActive(true)%}
+        {% set liClasses = ['active'] %}
+    {% else %}
+        {% set liClasses = [] %}
+    {% endif %}
+
+    {% if sub|length > 0%}
+        {% set liClasses,
+               aAttribs = liClasses|merge(['dropdown']), 
+                          ' class="dropdown-toggle" data-toggle="dropdown"' 
+        %}
+    {% endif %}
+
+    {% if liClasses|length > 0%}
+        {% set liClass = ' class="' ~ liClasses|join(' ') ~ '"' %}
+    {% endif %}
+
+    <li {{liClass|raw}}>
+        
+        <a href="javascript:void(0)" {{aAttribs|raw}}>
+            {{page.getlabel()}}
+            <b class="caret"></b>
+        </a>
+        
+        {% if sub|length > 0%}
+        <ul class="dropdown-menu">
+                {% for pages in sub %}
+                    {% set active = pages.isActive() ? ' class="active"' : '' %}
+                    <li {{active|raw}}>
+                        <a href="{{url(pages.getRoute(),{action: pages.getAction})}}">
+                            {{pages.getlabel()}}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        
+    </li>
+    <li class="divider"></li>
+{%endfor%}
