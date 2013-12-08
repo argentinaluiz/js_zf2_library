@@ -53,7 +53,7 @@ class BaseForm extends Form {
 
         $this->btnExcluir = new Element\Button("btnExcluir");
         $this->btnExcluir->setLabel("<span class='glyphicon glyphicon-trash'></span>")
-                ->setAttribute('data-ng-click', "submitValue = 'delete'")
+                ->setAttribute('data-ng-delete', "optionsDelete")
                 ->setAttribute('data-ng-disabled', $this->getModelCodigo() . " == ''")
                 ->setAttribute('title', "Excluir")
                 ->setAttribute('class', 'btn btn-danger');

@@ -166,7 +166,6 @@ class BaseService implements ServiceLocatorAwareInterface {
     }
 
     public function handlePDOException(\PDOException $ex) {
-        echo "adsf";
         $this->rollback();
         $this->close();
         switch ($ex->errorInfo[1]) {
