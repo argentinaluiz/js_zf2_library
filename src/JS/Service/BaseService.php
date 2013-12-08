@@ -75,10 +75,7 @@ class BaseService implements ServiceLocatorAwareInterface {
 
             return $this->entity;
         } catch (\Exception $ex) {
-            if ($ex->getPrevious() instanceof \PDOException)
-                $this->handlePDOException($ex->getPrevious());
-            else
-                $this->handleException($ex);
+            $this->chooseHandleException($ex);
         }
     }
 
@@ -97,10 +94,7 @@ class BaseService implements ServiceLocatorAwareInterface {
 
             return $this->entity;
         } catch (\Exception $ex) {
-            if ($ex->getPrevious() instanceof \PDOException)
-                $this->handlePDOException($ex->getPrevious());
-            else
-                $this->handleException($ex);
+            $this->chooseHandleException($ex);
         }
     }
 
@@ -114,10 +108,7 @@ class BaseService implements ServiceLocatorAwareInterface {
             } else
                 throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
         } catch (\Exception $ex) {
-            if ($ex->getPrevious() instanceof \PDOException)
-                $this->handlePDOException($ex->getPrevious());
-            else
-                $this->handleException($ex);
+            $this->chooseHandleException($ex);
         }
     }
 
@@ -157,6 +148,13 @@ class BaseService implements ServiceLocatorAwareInterface {
     protected function close() {
         if ($this->entityManager->getConnection()->isConnected())
             $this->entityManager->getConnection()->close();
+    }
+
+    public function chooseHandleException(\Exception $ex) {
+        if ($ex->getPrevious() instanceof \PDOException)
+            $this->handlePDOException($ex->getPrevious());
+        else
+            $this->handleException($ex);
     }
 
     public function handleException(\Exception $ex) {
