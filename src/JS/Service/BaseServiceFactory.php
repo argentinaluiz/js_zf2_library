@@ -21,7 +21,7 @@ class BaseServiceFactory implements FactoryInterface {
     /**
      * @return \JS\Translator\Translator
      */
-    private function getTranslator($serviceLocator) {
+    public function getTranslator($serviceLocator) {
         $config = $serviceLocator->get('Configuration');
         $trConfig = isset($config['translator']) ? $config['translator'] : array();
         $translator = Translator::factory($trConfig);
@@ -29,7 +29,7 @@ class BaseServiceFactory implements FactoryInterface {
         return $translator;
     }
 
-    private function getEntityName() {
+    public function getEntityName() {
         return $this->entityName;
     }
 
