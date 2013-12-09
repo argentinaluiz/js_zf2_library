@@ -18,6 +18,9 @@ class BaseServiceFactory implements FactoryInterface {
         return $service;
     }
 
+    /**
+     * @return \JS\Translator\Translator
+     */
     private function getTranslator($serviceLocator) {
         $config = $serviceLocator->get('Configuration');
         $trConfig = isset($config['translator']) ? $config['translator'] : array();

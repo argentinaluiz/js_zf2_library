@@ -67,7 +67,7 @@ abstract class BaseController extends AbstractActionController {
                         'info' => "<strong>" . $this->getTranslator()->translate('s_created') . "</strong>"
                     ));
                 } else {
-                    $entity = $this->getService()->update($data);
+                    $entity = $this->getService()->update($data['codigo'], $data);
                     $this->flashMessenger()->addMessage(array(
                         'info' => "<strong>" . $this->getTranslator()->translate('s_created') . "</strong>"
                     ));

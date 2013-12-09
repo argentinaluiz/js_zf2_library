@@ -79,15 +79,21 @@ class BaseService implements ServiceLocatorAwareInterface {
         }
     }
 
-    public function update($data = array()) {
+    public function update($codigo, $data = array()) {
         try {
+
             $primaryKey = $this->getEntityManager()->getClassMetadata($this->getEntityName())->getSingleIdentifierFieldName();
-            if (isset($data[$primaryKey]) && !empty($data[$primaryKey])) {
-                $this->entity = $this->find($data[$primaryKey]);
-                if (!$this->entity)
-                    throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
-            } else
+
+            $this->entity = $this->find($codigo);
+            if (!$this->entity)
                 throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
+            else {
+                if (isset($data[$primaryKey]) && !empty($data[$primaryKey])) {
+                    if ($codigo != $data[$primaryKey] && (($entity = $this->find($data[$primaryKey])) != null))
+                        throw new BaseException($this->getTranslator()->translate('e_entity_exist'), BaseException::ERROR_ENTITY_EXIST, null, $entity);
+                }
+            }
+
 
             $this->entity->hydrate($data);
             $this->getEntityManager()->flush();

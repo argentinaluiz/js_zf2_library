@@ -8,6 +8,7 @@ use Zend\Form\Fieldset;
 
 class BaseForm extends Form {
 
+    private $codigo;
     private $submitValue;
     private $btnSalvar;
     private $btnSalvarIncluir;
@@ -19,6 +20,10 @@ class BaseForm extends Form {
 
     public function __construct($name = null, $options = array()) {
         parent::__construct($name, $options);
+
+        $this->codigo = new Element\Hidden('codigo');
+
+        $this->add($this->codigo);
     }
 
     public function addFormActions() {
@@ -65,6 +70,14 @@ class BaseForm extends Form {
         $this->fielsetButtons->add($this->btnCancelar);
         $this->fielsetButtons->add($this->btnExcluir);
         $this->add($this->fielsetButtons);
+    }
+
+    public function getCodigo() {
+        return $this->codigo;
+    }
+
+    public function setCodigo($codigo) {
+        $this->codigo = $codigo;
     }
 
     /**
