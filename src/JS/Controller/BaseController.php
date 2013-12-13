@@ -17,8 +17,6 @@ use JS\Exception\BaseException;
  * Convenience methods for pre-built plugins (@see __call):
  *
  * @method \JS\Plugin\DataTable jsDataTable
- * @method \JS\Plugin\Format jsFormat
- * @method \JS\Plugin\JSArray jsArray
  * @method \JS\Plugin\JSResponse jsResponse
  * @method \JS\Plugin\JSMessage jsMessage
  * @method \JS\Plugin\Log jsLog
@@ -26,8 +24,10 @@ use JS\Exception\BaseException;
 abstract class BaseController extends AbstractActionController {
 
     private $entity = null;
+    private $entityName;
     private $formConsultar;
-    private $formEditar;
+    private $formCreate;
+    private $formUpdate;
     private $pageSize = 20;
     private $repository;
     private $routesAction = array(
@@ -45,7 +45,24 @@ abstract class BaseController extends AbstractActionController {
      * save, save_and_new, save_and_close, delete
      * )
      */
-    abstract public function initRoutesAction();
+    public function initRoutesAction() {
+        $this->addRoutesAction('save', function($controller) {
+            $url = $controller->url(null, array(
+                'action' => 'editar',
+                $controller->getIdentifierName() => $controller->getEntity()->{'get' . ucfirst($controller->getIdentifierName())}()
+            ));
+            return $url;
+        });
+
+
+        $this->addRoutesAction('save_and_close', $this->url(null, array(
+                    'action' => 'consultar',
+        )));
+
+        $this->addRoutesAction('save_and_new', $this->url(null, array(
+                    'action' => 'novo',
+        )));
+    }
 
     abstract public function find($opcoes);
 
@@ -53,68 +70,106 @@ abstract class BaseController extends AbstractActionController {
         $this->routesAction[$routeAction] = $url;
     }
 
-    public function salvarAction() {
+    private function update() {
+        $form = $this->getFormUpdate();
+        $formName = $form->getName();
         $data = $this->params()->fromPost();
-        $form = $this->getFormEditar();
-        $entity = null;
+        if ($formName)
+            $data = $data[$formName];
         try {
+            if (isset($data[$form->getBaseFieldset()->getName()][$this->getIdentifierName()])) {
+                $entity = $this->getRepository()->find($data[$form->getBaseFieldset()->getName()][$this->getIdentifierName()]);
+                if (!$entity)
+                    throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
+            } else
+                throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
+            $form->bind($entity);
             $form->setData($data);
+
             if ($form->isValid()) {
-                $data = $form->getData();
-                if ($data[$this->getIdentifierName()] == "") {
-                    $entity = $this->getService()->create($data);
-                    $this->flashMessenger()->addMessage(array(
-                        'info' => "<strong>" . $this->getTranslator()->translate('s_created') . "</strong>"
-                    ));
-                } else {
-                    $entity = $this->getService()->update($data['codigo'], $data);
-                    $this->flashMessenger()->addMessage(array(
-                        'info' => "<strong>" . $this->getTranslator()->translate('s_created') . "</strong>"
-                    ));
-                }
+                $entity = $this->getService()->update($entity);
+                $this->flashMessenger()->addMessage(array(
+                    'info' => "<strong>" . $this->getTranslator()->translate('s_updated') . "</strong>"
+                ));
                 $this->setEntity($entity);
             }
         } catch (\Exception $ex) {
-            if (isset($data[$this->getIdentifierName()])) {
-                if ($data[$this->getIdentifierName()] == "")
-                    $this->flashMessenger()->addMessage(array(
-                        'error' => "<strong>" . $this->getTranslator()->translate('e_not_created') . "</strong> ->" . $ex->getMessage())
-                    );
-                else
-                    $this->flashMessenger()->addMessage(array(
-                        'error' => "<strong>" . $this->getTranslator()->translate('e_not_updated') . "</strong> ->" . $ex->getMessage())
-                    );
-            }
+            if ($ex instanceof BaseException && $ex->getCode() == BaseException::ERROR_ENTITY_NOT_EXIST)
+                $form->setData($data);
+            $this->flashMessenger()->addMessage(array(
+                'error' => "<strong>" . $this->getTranslator()->translate('e_not_updated') . "</strong> ->" . $ex->getMessage())
+            );
             $this->jsLog()->log($ex);
         }
         return false;
     }
 
+    private function create() {
+        $form = $this->getFormCreate();
+        $formName = $form->getName();
+        $data = $this->params()->fromPost();
+        if ($formName)
+            $data = $data[$formName];
+        $entityName = $this->getEntityName();
+        $entity = new $entityName;
+        $form->bind($entity);
+        $form->setData($data);
+        try {
+            if ($form->isValid()) {
+                $entity = $this->getService()->create($entity);
+                $this->flashMessenger()->addMessage(array(
+                    'info' => "<strong>" . $this->getTranslator()->translate('s_created') . "</strong>"
+                ));
+                $this->setEntity($entity);
+            }
+        } catch (\Exception $ex) {
+            $this->flashMessenger()->addMessage(array(
+                'error' => "<strong>" . $this->getTranslator()->translate('e_not_created') . "</strong> ->" . $ex->getMessage())
+            );
+            $this->jsLog()->log($ex);
+        }
+        return false;
+    }
+
+    public function indexAction() {
+        return $this->redirect()->toRoute(null, array(
+                    'action' => 'consultar'
+        ));
+    }
+
+    public function novoAction() {
+        if ($this->getRequest()->isPost()) {
+            $this->create();
+            if ($this->getEntity()) {
+                $result = $this->triggerRoutesAction($this->getFormCreate());
+                if ($result)
+                    return $result;
+                else {
+                    $entityName = $this->getEntityName();
+                    $this->getFormCreate()->bind(new $entityName);
+                }
+            }
+        }
+        $messages = $this->jsMessage()->messagesComplex($this->flashMessenger()->getCurrentMessages());
+        $this->flashMessenger()->clearCurrentMessages();
+        return new ViewModel(array(
+            'messages' => $messages,
+            'form' => $this->getFormCreate()
+        ));
+    }
+
     public function editarAction() {
         if ($this->getRequest()->isPost()) {
-            $this->salvarAction();
+            $this->update();
             if ($this->getEntity()) {
-                $this->initRoutesAction();
-                $submitValue = $this->getFormEditar()->getElementSubmit()->getValue();
-                $routes = $this->getRoutesAction();
-                if (in_array($submitValue, array_keys($routes))) {
-                    $action = $routes[$submitValue];
-                    if (empty($action))
-                        $this->flashMessenger()->addMessage(array(
-                            'notice' => "<strong>Rota não implementada</strong>"
-                        ));
-                    else {
-                        if (is_callable($routes[$submitValue]))
-                            return $this->redirect()->toUrl($routes[$submitValue]($this));
-                        else
-                            return $this->redirect()->toUrl($routes[$submitValue]);
-                    }
-                } else {
-                    $this->getFormEditar()->bind($this->getEntity());
-                    $this->flashMessenger()->addMessage(array(
-                        'notice' => "<strong>" . $this->getTranslator()->translate('n_not_redirect') . "</strong>"
+                $result = $this->triggerRoutesAction($this->getFormUpdate());
+                if ($result)
+                    return $result;
+                else
+                    return $this->redirect()->toRoute(null, array(
+                                'action' => 'editar',
+                                $this->getIdentifierName() => $this->getEntity()->{'get' . ucfirst($this->getIdentifierName())}
                     ));
-                }
             }
         } else {
             $codigo = $this->getEvent()->getRouteMatch()->getParam($this->getIdentifierName());
@@ -123,20 +178,23 @@ abstract class BaseController extends AbstractActionController {
                     $registro = $this->getRepository()->find($codigo);
                     if ($registro == null)
                         throw new BaseException($this->getTranslator()->translate('e_entity_not_found', BaseException::ERROR_ENTITY_NOT_EXIST));
-                    $this->getFormEditar()->bind($registro);
+                    $this->getFormUpdate()->bind($registro);
                 } catch (\Exception $ex) {
                     $this->flashMessenger()->addMessage(array(
                         'error' => "<strong>" . $this->getTranslator()->translate('e_not_load_entity') . "</strong> ->" . $ex->getMessage()
                     ));
                     $this->jsLog()->log($ex);
+                    return $this->redirect()->toRoute(null, array('action' => 'novo'));
                 }
-            }
+            } else
+                return $this->redirect()->toRoute(null, array('action' => 'novo'));
         }
         $messages = $this->jsMessage()->messagesComplex($this->flashMessenger()->getCurrentMessages());
         $this->flashMessenger()->clearCurrentMessages();
+
         return new ViewModel(array(
             'messages' => $messages,
-            'form' => $this->getFormEditar()
+            'form' => $this->getFormUpdate()
         ));
     }
 
@@ -216,6 +274,27 @@ abstract class BaseController extends AbstractActionController {
         }
     }
 
+    private function triggerRoutesAction($form) {
+        $this->initRoutesAction();
+        $submitValue = $form->getElementSubmit()->getValue();
+        $routes = $this->getRoutesAction();
+        //Sem acoes de rotas incluidas ou nao presente no array de rotas default
+        if (in_array($submitValue, array_keys($routes))) {
+            $action = $routes[$submitValue];
+            if (empty($action))
+                $this->flashMessenger()->addMessage(array(
+                    'notice' => "<strong>Rota não implementada</strong>"
+                ));
+            else {
+                if (is_callable($routes[$submitValue]))
+                    return $this->redirect()->toUrl($routes[$submitValue]($this));
+                else
+                    return $this->redirect()->toUrl($routes[$submitValue]);
+            }
+        } else
+            return false;
+    }
+
     public function basePath() {
         return $this->getViewHelper()->basePath();
     }
@@ -240,6 +319,15 @@ abstract class BaseController extends AbstractActionController {
         return $this;
     }
 
+    public function getEntityName() {
+        return $this->entityName;
+    }
+
+    public function setEntityName($entityName) {
+        $this->entityName = $entityName;
+        return $this;
+    }
+
     public function getPageSize() {
         return $this->pageSize;
     }
@@ -249,12 +337,21 @@ abstract class BaseController extends AbstractActionController {
         return $this;
     }
 
-    public function getFormEditar() {
-        return $this->formEditar;
+    public function getFormCreate() {
+        return $this->formCreate;
     }
 
-    public function setFormEditar($formEditar) {
-        $this->formEditar = $formEditar;
+    public function setFormCreate($formCreate) {
+        $this->formCreate = $formCreate;
+        return $this;
+    }
+
+    public function getFormUpdate() {
+        return $this->formUpdate;
+    }
+
+    public function setFormUpdate($formUpdate) {
+        $this->formUpdate = $formUpdate;
         return $this;
     }
 

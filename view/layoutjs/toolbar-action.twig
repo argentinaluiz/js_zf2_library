@@ -9,6 +9,7 @@
                      form.get('btnCancelar'),
                      form.get('btnExcluir')
 %}
+{{ formHidden(form.get('submitValue')) }}
 <legend></legend>
 <div class="btn-group">
     <button type="submit" class="btn btn-primary" {{formButton().createAttributesString(btnSalvarConcluir.getAttributes())|raw}}>

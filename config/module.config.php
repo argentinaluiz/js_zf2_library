@@ -9,8 +9,6 @@ return array(
     ),
     'controller_plugins' => array(
         'invokables' => array(
-            'jsFormat' => '\JS\Plugin\Format',
-            'jsArray' => '\JS\Plugin\JSArray',
             'jsMessage' => '\JS\Plugin\JSMessage',
             'jsResponse' => '\JS\Plugin\JSResponse',
             'jsDataTable' => '\JS\Plugin\DataTable'

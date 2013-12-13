@@ -15,4 +15,9 @@ class BaseEntity {
         $hydrator->hydrate($data, $this);
     }
 
+    public function extract() {
+        $hydrator = new ClassMethods();
+        return $hydrator->extract($this);
+    }
+
 }

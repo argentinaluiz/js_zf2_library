@@ -60,47 +60,23 @@ class BaseService implements ServiceLocatorAwareInterface {
         return $this->getEntityManager()->getRepository($this->entityName);
     }
 
-    public function create($data = array()) {
+    public function create($entity) {
         try {
-            $primaryKey = $this->getEntityManager()->getClassMetadata($this->getEntityName())->getSingleIdentifierFieldName();
-            if (isset($data[$primaryKey]) && !empty($data[$primaryKey])) {
-                $this->entity = $this->getReference($data[$primaryKey]);
-                if ($this->entity)
-                    throw new BaseException($this->getTranslator()->translate('e_entity_exist'), BaseException::ERROR_ENTITY_NOT_EXIST);
-            }
-            $this->entity = new $this->entityName($data);
-
-            $this->getEntityManager()->persist($this->entity);
+            $this->getEntityManager()->persist($entity);
             $this->getEntityManager()->flush();
-
-            return $this->entity;
+            return $entity;
         } catch (\Exception $ex) {
-            $this->chooseHandleException($ex);
+            $this->chooseHandleTransactionException($ex);
         }
     }
 
-    public function update($codigo, $data = array()) {
+    public function update($entity) {
         try {
-
-            $primaryKey = $this->getEntityManager()->getClassMetadata($this->getEntityName())->getSingleIdentifierFieldName();
-
-            $this->entity = $this->find($codigo);
-            if (!$this->entity)
-                throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
-            else {
-                if (isset($data[$primaryKey]) && !empty($data[$primaryKey])) {
-                    if ($codigo != $data[$primaryKey] && (($entity = $this->find($data[$primaryKey])) != null))
-                        throw new BaseException($this->getTranslator()->translate('e_entity_exist'), BaseException::ERROR_ENTITY_EXIST, null, $entity);
-                }
-            }
-
-
-            $this->entity->hydrate($data);
+            $this->getEntityManager()->persist($entity);
             $this->getEntityManager()->flush();
-
-            return $this->entity;
+            return $entity;
         } catch (\Exception $ex) {
-            $this->chooseHandleException($ex);
+            $this->chooseHandleTransactionException($ex);
         }
     }
 
@@ -114,7 +90,7 @@ class BaseService implements ServiceLocatorAwareInterface {
             } else
                 throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
         } catch (\Exception $ex) {
-            $this->chooseHandleException($ex);
+            $this->chooseHandleTransactionException($ex);
         }
     }
 
@@ -156,27 +132,27 @@ class BaseService implements ServiceLocatorAwareInterface {
             $this->entityManager->getConnection()->close();
     }
 
-    public function chooseHandleException(\Exception $ex) {
+    public function chooseHandleTransactionException(\Exception $ex) {
         if ($ex->getPrevious() instanceof \PDOException)
-            $this->handlePDOException($ex->getPrevious());
+            $this->handleTransactionPDOException($ex);
         else
-            $this->handleException($ex);
+            $this->handleTransactionException($ex);
     }
 
-    public function handleException(\Exception $ex) {
+    public function handleTransactionException(\Exception $ex) {
         $this->rollback();
         $this->close();
         throw $ex;
     }
 
-    public function handlePDOException(\PDOException $ex) {
+    public function handleTransactionPDOException(\Exception $ex) {
         $this->rollback();
         $this->close();
-        switch ($ex->errorInfo[1]) {
+        switch ($ex->getPrevious()->errorInfo[1]) {
             case 1451:
                 throw new BaseException($this->getTranslator()->translate('e_pdo_1451'), BaseException::PDO_ERROR_DELETE_REGISTRO, $ex);
             default :
-            //    throw $ex;
+                throw $ex;
         }
     }
 

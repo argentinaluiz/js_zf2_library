@@ -5,25 +5,27 @@ namespace JS\Form;
 use Zend\Form\Form;
 use Zend\Form\Element;
 use Zend\Form\Fieldset;
+use Doctrine\Common\Persistence\ObjectManager;
+use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 
-class BaseForm extends Form {
+class BaseForm extends Form implements ObjectManagerAwareInterface {
 
-    private $codigo;
     private $submitValue;
     private $btnSalvar;
     private $btnSalvarIncluir;
     private $btnSalvarConcluir;
     private $btnCancelar;
     private $btnExcluir;
-    private $modelCodigo;
+    private $modelCodigo = 'codigo';
     private $fielsetButtons;
+    protected $objectManager;
 
-    public function __construct($name = null, $options = array()) {
+    public function __construct(ObjectManager $objectManager, $name = null, $options = array()) {
         parent::__construct($name, $options);
 
-        $this->codigo = new Element\Hidden('codigo');
-
-        $this->add($this->codigo);
+        $this->setObjectManager($objectManager);
+        $this->setHydrator(new DoctrineObject($objectManager));
     }
 
     public function addFormActions() {
@@ -63,21 +65,13 @@ class BaseForm extends Form {
                 ->setAttribute('title', "Excluir")
                 ->setAttribute('class', 'btn btn-danger');
 
-        $this->add($this->submitValue);
+        $this->fielsetButtons->add($this->submitValue);
         $this->fielsetButtons->add($this->btnSalvarConcluir);
         $this->fielsetButtons->add($this->btnSalvar);
         $this->fielsetButtons->add($this->btnSalvarIncluir);
         $this->fielsetButtons->add($this->btnCancelar);
         $this->fielsetButtons->add($this->btnExcluir);
         $this->add($this->fielsetButtons);
-    }
-
-    public function getCodigo() {
-        return $this->codigo;
-    }
-
-    public function setCodigo($codigo) {
-        $this->codigo = $codigo;
     }
 
     /**
@@ -167,6 +161,14 @@ class BaseForm extends Form {
 
     public function setModelCodigo($modelCodigo) {
         $this->modelCodigo = $modelCodigo;
+    }
+
+    public function getObjectManager() {
+        return $this->objectManager;
+    }
+
+    public function setObjectManager(ObjectManager $objectManager) {
+        $this->objectManager = $objectManager;
     }
 
 }
