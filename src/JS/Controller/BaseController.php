@@ -47,7 +47,7 @@ abstract class BaseController extends AbstractActionController {
      */
     public function initRoutesAction() {
         $this->addRoutesAction('save', function($controller) {
-            $url = $controller->url(null, array(
+            $url = $controller->url()->fromRoute(null, array(
                 'action' => 'editar',
                 $controller->getIdentifierName() => $controller->getEntity()->{'get' . ucfirst($controller->getIdentifierName())}()
             ));
@@ -55,11 +55,11 @@ abstract class BaseController extends AbstractActionController {
         });
 
 
-        $this->addRoutesAction('save_and_close', $this->url(null, array(
+        $this->addRoutesAction('save_and_close', $this->url()->fromRoute(null, array(
                     'action' => 'consultar',
         )));
 
-        $this->addRoutesAction('save_and_new', $this->url(null, array(
+        $this->addRoutesAction('save_and_new', $this->url()->fromRoute(null, array(
                     'action' => 'novo',
         )));
     }
@@ -70,15 +70,23 @@ abstract class BaseController extends AbstractActionController {
         $this->routesAction[$routeAction] = $url;
     }
 
+    protected function getIdentifierData($form, $data) {
+        if (isset($data[$form->getBaseFieldset()->getName()][$this->getIdentifierName()]))
+            return $data[$form->getBaseFieldset()->getName()][$this->getIdentifierName()];
+        else
+            return false;
+    }
+
     private function update() {
         $form = $this->getFormUpdate();
         $formName = $form->getName();
         $data = $this->params()->fromPost();
-        if ($formName)
+        if (!empty($formName) && $form->wrapElements())
             $data = $data[$formName];
         try {
-            if (isset($data[$form->getBaseFieldset()->getName()][$this->getIdentifierName()])) {
-                $entity = $this->getRepository()->find($data[$form->getBaseFieldset()->getName()][$this->getIdentifierName()]);
+            $codigo = $this->getIdentifierData($form, $data);
+            if ($codigo) {
+                $entity = $this->getRepository()->find($codigo);
                 if (!$entity)
                     throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
             } else
