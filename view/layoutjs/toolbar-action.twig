@@ -11,7 +11,7 @@
 %}
 {{ formHidden(form.get('submitValue')) }}
 <legend></legend>
-<div class="btn-group">
+<div class="btn-group dropup">
     <button type="submit" class="btn btn-primary" {{formButton().createAttributesString(btnSalvarConcluir.getAttributes())|raw}}>
         {{ (btnSalvarConcluir.getLabel())|raw }}
     </button>
