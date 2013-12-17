@@ -116,7 +116,7 @@ abstract class BaseController extends AbstractActionController {
         $form = $this->getFormCreate();
         $formName = $form->getName();
         $data = $this->params()->fromPost();
-        if ($formName)
+        if (!empty($formName) && $form->wrapElements())
             $data = $data[$formName];
         $entityName = $this->getEntityName();
         $entity = new $entityName;
