@@ -12,8 +12,8 @@ class BaseEntityRepository extends EntityRepository {
     private $select;
     private $order;
     public $orderByDefault;
-    public static $orderByMap;
-    public static $camposSelectList;
+    public $orderByMap;
+    public $camposSelectList;
 
     public function __construct($em, $class) {
         parent::__construct($em, $class);
@@ -21,7 +21,7 @@ class BaseEntityRepository extends EntityRepository {
 
     public function getSelectList() {
         $select = "";
-        foreach (self::$camposSelectList as $key => $value) {
+        foreach ($this->camposSelectList as $key => $value) {
             if (is_array($value) && array_key_exists('alias', $value))
                 $select .= $value["alias"] . "." . $key . ",";
             else

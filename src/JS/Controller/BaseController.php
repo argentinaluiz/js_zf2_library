@@ -244,7 +244,7 @@ abstract class BaseController extends AbstractActionController {
             $pageSize = abs($this->params()->fromQuery("iDisplayLength", $this->getPageSize()));
             $columnFlag = '';
             $repository = $this->getRepository();
-            $orderBy = array_keys($repository::$orderByMap);
+            $orderBy = array_keys($repository->orderByMap);
             array_unshift($orderBy, $columnFlag);
             try {
                 $result = $this->find(array(
