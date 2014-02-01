@@ -80,8 +80,11 @@ class Module {
             }
             if (error_reporting() & $severity) {
                 $exception = new \ErrorException($message, 0, $severity, $filename, $lineno);
-                $e->setParam('exception', $exception);
-                $e->getApplication()->getEventManager()->trigger('dispatch.error', $e);
+                if ($severity != E_NOTICE) {
+                    $e->setParam('exception', $exception);
+                    $e->getApplication()->getEventManager()->trigger('dispatch.error', $e);
+                } else
+                    $e->getApplication()->getServiceManager()->get('Controller\Plugin\Manager')->get('jsLog')->log($exception, 5);
             }
         });
     }

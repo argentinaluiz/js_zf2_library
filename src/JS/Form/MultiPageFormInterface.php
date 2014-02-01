@@ -13,7 +13,5 @@ interface MultiPageFormInterface {
 
     public function addSubmitButton(Form $subForm);
 
-    public function addFinishButton(Form $subForm);
-
     public function getData($flag = FormInterface::VALUES_NORMALIZED);
 }

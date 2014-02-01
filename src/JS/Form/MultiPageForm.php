@@ -3,75 +3,71 @@
 namespace JS\Form;
 
 use Zend\Form\Form;
-use Zend\Form\Element;
+use JS\Form\AbstractForm;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
-abstract class MultiPageForm extends Form implements MultiPageFormInterface, ServiceLocatorAwareInterface {
+abstract class MultiPageForm extends AbstractForm implements MultiPageFormInterface, ServiceLocatorAwareInterface {
 
     protected $serviceLocator;
 
     public function __construct($sm, $name = null, $options = array()) {
+        parent::__construct($sm->get('Doctrine\ORM\EntityManager'), $name, $options);
         $this->setServiceLocator($sm);
-        parent::__construct($name, $options);
     }
 
     public function addCancelButton(Form $subForm) {
         $subForm->remove("btnCancelar");
-        $btnCancelar = new Element\Button("btnCancelar");
-        $btnCancelar->setLabel("Cancelar")->
-                setAttribute('class', 'btn')
-                ->setAttribute('type', 'button');
-        $subForm->add($btnCancelar);
-        return $this;
-    }
-
-    public function addFinishButton(Form $subForm) {
-        $subForm->remove("btnSalvar");
-        $btnSalvar = new Element\Button("btnSalvar");
-        $btnSalvar->setLabel("Finalizar")->
-                setAttribute('class', 'btn btn-primary')
-                ->setAttribute('type', 'submit');
-        $subForm->add($btnSalvar);
+        $subForm->add(array(
+            'type' => 'Button',
+            'name' => 'Cancelar',
+            'attributes' => array(
+                'class' => 'btn btn-default',
+                'type' => 'button'
+            ),
+            'options' => array(
+                'label' => 'Cancelar'
+            )
+        ));
         return $this;
     }
 
     public function addSubmitButton(Form $subForm) {
         $subForm->remove("btnSalvar");
-        $btnSalvar = new Element\Button("btnSalvar");
-        $btnSalvar->setLabel("Salvar e Continuar")->
-                setAttribute('class', 'btn btn-primary')
-                ->setAttribute('type', 'submit');
-        $subForm->add($btnSalvar);
+        $subForm->add(array(
+            'type' => 'Button',
+            'name' => 'btnSalvar',
+            'attributes' => array(
+                'class' => 'btn btn-default',
+                'type' => 'button'
+            ),
+            'options' => array(
+                'label' => 'Salvar e Continuar'
+            )
+        ));
         return $this;
     }
 
-    public function prepareSubForm(Form $form, $isLastForm = false) {
-        if ($form instanceof Form)
-            $subForm = $form;
-        else
-            throw new \Exception('Argumento Inválido Passado para ' . __FUNCTION__ . '()');
-        if (!$isLastForm)
+    public function prepareSubForm(Form $subForm, $isLastForm = false) {
+        if (!$isLastForm) {
             $this->addSubmitButton($subForm);
-        else
-            $this->addFinishButton($subForm);
-        $this->addCancelButton($subForm);
+            $this->addCancelButton($subForm);
+        } else
+            $subForm->add(new FormActionsFieldset());
         return $subForm;
     }
 
-    public function getData($flag = \Zend\Form\FormInterface::VALUES_NORMALIZED) {
-        $data = parent::getData($flag);
-        $arrayWrap = array_values(array_slice($data, -(count($this->getFieldsets()))));
-        array_splice($data, -(count($this->getFieldsets())));
-        foreach ($arrayWrap as $key => $value)
-            $data+=$value;
+    public function getData($flag = \Zend\Form\FormInterface::VALUES_AS_ARRAY) {
+        $data = array();
+        $forms = $this->getFieldsets();
+        foreach ($forms as $form) {
+            $array = array_values(array_slice($form->getData($flag), -1));
+            $data+= $array[0];
+        }
         return $data;
     }
 
-    public function getForms() {
-        return $this->forms;
-    }
-
-    public function setServiceLocator(\Zend\ServiceManager\ServiceLocatorInterface $serviceLocator) {
+    public function setServiceLocator(ServiceLocatorInterface $serviceLocator) {
         $this->serviceLocator = $serviceLocator;
     }
 

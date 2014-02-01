@@ -2,7 +2,6 @@
 
 namespace JS\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use JS\Exception\BaseException;
 
@@ -21,7 +20,7 @@ use JS\Exception\BaseException;
  * @method \JS\Plugin\JSMessage jsMessage
  * @method \JS\Plugin\Log jsLog
  */
-abstract class BaseController extends AbstractActionController {
+abstract class BaseController extends RoutesActionController {
 
     private $entity = null;
     private $entityName;
@@ -30,52 +29,10 @@ abstract class BaseController extends AbstractActionController {
     private $formUpdate;
     private $pageSize = 20;
     private $repository;
-    private $routesAction = array(
-        'save' => '',
-        'save_and_new' => '',
-        'save_and_close' => '',
-        'delete' => ''
-    );
     private $service;
     private $translator;
-    protected $identifierName = 'codigo';
-
-    /**
-     * @todo routes disponiveis => array(
-     * save, save_and_new, save_and_close, delete
-     * )
-     */
-    public function initRoutesAction() {
-        $this->addRoutesAction('save', function($controller) {
-            $url = $controller->url()->fromRoute(null, array(
-                'action' => 'editar',
-                $controller->getIdentifierName() => $controller->getEntity()->{'get' . ucfirst($controller->getIdentifierName())}()
-            ));
-            return $url;
-        });
-
-
-        $this->addRoutesAction('save_and_close', $this->url()->fromRoute(null, array(
-                    'action' => 'consultar',
-        )));
-
-        $this->addRoutesAction('save_and_new', $this->url()->fromRoute(null, array(
-                    'action' => 'novo',
-        )));
-    }
 
     abstract public function find($opcoes);
-
-    public function addRoutesAction($routeAction, $url) {
-        $this->routesAction[$routeAction] = $url;
-    }
-
-    protected function getIdentifierData($form, $data) {
-        if (isset($data[$form->getBaseFieldset()->getName()][$this->getIdentifierName()]))
-            return $data[$form->getBaseFieldset()->getName()][$this->getIdentifierName()];
-        else
-            return false;
-    }
 
     private function update() {
         $form = $this->getFormUpdate();
@@ -149,7 +106,7 @@ abstract class BaseController extends AbstractActionController {
         if ($this->getRequest()->isPost()) {
             $this->create();
             if ($this->getEntity()) {
-                $result = $this->triggerRoutesAction($this->getFormCreate());
+                $result = $this->triggerRoutesAction($this->getFormCreate()->get('formActions')->getSubmitValue()->getValue());
                 if ($result)
                     return $result;
                 else {
@@ -170,14 +127,11 @@ abstract class BaseController extends AbstractActionController {
         if ($this->getRequest()->isPost()) {
             $this->update();
             if ($this->getEntity()) {
-                $result = $this->triggerRoutesAction($this->getFormUpdate());
-                if ($result)
-                    return $result;
-                else
-                    return $this->redirect()->toRoute(null, array(
-                                'action' => 'editar',
-                                $this->getIdentifierName() => $this->getEntity()->{'get' . ucfirst($this->getIdentifierName())}
-                    ));
+                $result = $this->triggerRoutesAction($this->getFormUpdate()->get('formActions')->getSubmitValue()->getValue());
+                return $result ? $result : $this->redirect()->toRoute($this->getRoute(), array(
+                            'action' => 'editar',
+                            $this->getIdentifierName() => $this->getEntity()->{'get' . ucfirst($this->getIdentifierName())}
+                ));
             }
         } else {
             $codigo = $this->getEvent()->getRouteMatch()->getParam($this->getIdentifierName());
@@ -267,57 +221,6 @@ abstract class BaseController extends AbstractActionController {
         }
     }
 
-    /**
-     * Funcao chamada quanto uma acao nao e encontrada.
-     * Se requisição e via XmlHttpRequest lanca uma excecao para url nao encontrada.
-     * Senao chama a funcao do proprio Zend para acoes nao encontrada e retornada a pagina.
-     */
-    public function notFoundAction() {
-        if (!$this->getRequest()->isXmlHttpRequest())
-            parent::notFoundAction();
-        else {
-            $this->jsResponse()->error("Url Não Encontrada");
-            $this->jsLog()->log(new \Exception('Url Não Encontrada'));
-            return $this->getResponse();
-        }
-    }
-
-    private function triggerRoutesAction($form) {
-        $this->initRoutesAction();
-        $submitValue = $form->getElementSubmit()->getValue();
-        $routes = $this->getRoutesAction();
-        //Sem acoes de rotas incluidas ou nao presente no array de rotas default
-        if (in_array($submitValue, array_keys($routes))) {
-            $action = $routes[$submitValue];
-            if (empty($action))
-                $this->flashMessenger()->addMessage(array(
-                    'notice' => "<strong>Rota não implementada</strong>"
-                ));
-            else {
-                if (is_callable($routes[$submitValue]))
-                    return $this->redirect()->toUrl($routes[$submitValue]($this));
-                else
-                    return $this->redirect()->toUrl($routes[$submitValue]);
-            }
-        } else
-            return false;
-    }
-
-    public function basePath() {
-        return $this->getViewHelper()->basePath();
-    }
-
-    /**
-     * @return \Zend\View\Renderer\PhpRenderer
-     */
-    public function getViewHelper() {
-        return $this->getServiceLocator()->get('Zend\View\Renderer\RendererInterface');
-    }
-
-    public function getFormManager() {
-        return $this->getServiceLocator()->get('FormElementManager');
-    }
-
     public function getEntity() {
         return $this->entity;
     }
@@ -390,30 +293,12 @@ abstract class BaseController extends AbstractActionController {
         return $this;
     }
 
-    public function getRoutesAction() {
-        return $this->routesAction;
-    }
-
-    public function setRoutesAction($routesAction) {
-        $this->routesAction = $routesAction;
-        return $this;
-    }
-
     public function getTranslator() {
         return $this->translator;
     }
 
     public function setTranslator($translator) {
         $this->translator = $translator;
-        return $this;
-    }
-
-    public function getIdentifierName() {
-        return $this->identifierName;
-    }
-
-    public function setIdentifierName($identifierName) {
-        $this->identifierName = $identifierName;
         return $this;
     }
 

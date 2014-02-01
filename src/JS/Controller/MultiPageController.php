@@ -2,14 +2,16 @@
 
 namespace JS\Controller;
 
-use JS\Controller\BaseController;
+use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use JS\Controller\MultiPageControllerInteface;
 use Zend\Session;
+use Zend\View\Model\ViewModel;
+use Zend\Form\FormInterface;
 
-abstract class MultiPageController extends BaseController implements MultiPageControllerInteface {
+abstract class MultiPageController extends RoutesActionController implements MultiPageControllerInteface {
 
     /**
-     * @var \Zend\Form\Form
+     * @var \JS\Form\MultiPageForm
      */
     protected $multiForm;
 
@@ -18,6 +20,11 @@ abstract class MultiPageController extends BaseController implements MultiPageCo
      */
     protected $container;
     protected $namespace;
+    private $entity = null;
+    private $entityName;
+    private $service;
+    private $translator;
+    private $hydrator;
 
     /**
      * Verifica se todos formularios sao validos
@@ -33,42 +40,22 @@ abstract class MultiPageController extends BaseController implements MultiPageCo
     }
 
     /**
-     * Pega o container,
-     * Se nao existe container, cria com namespace
-     * do controller atual
-     * @return \Zend\Session\Container
-     */
-    public function getContainer() {
-        if (null === $this->container) {
-            $this->container = new Session\Container($this->getNamespace());
-        }
-
-        return $this->container;
-    }
-
-    /**
      * Pega o atual formulario na tela do usuario.
      * Utiliza post
      * @return mixed \Zend\Form\Form | boolean
      */
     public function getCurrentSubForm() {
-        if (!$this->getRequest()->isPost())
+        if (!$this->getRequest()->isPost()) {
             return false;
-
-        foreach ($this->getPotentialForms() as $name)
-            if ($data = $this->params()->fromPost($name, false))
-                if (is_array($data))
+        }
+        foreach ($this->getPotentialForms() as $name) {
+            if ($data = $this->params()->fromPost($name, false)) {
+                if (is_array($data)) {
                     return $this->getMultiForm()->get($name);
-
+                }
+            }
+        }
         return false;
-    }
-
-    /**
-     * Pega o formulario geral
-     * @return \Zend\Form\Form
-     */
-    public function getMultiForm() {
-        return $this->multiForm;
     }
 
     /**
@@ -109,12 +96,6 @@ abstract class MultiPageController extends BaseController implements MultiPageCo
         return $savedForms;
     }
 
-    public function getNamespace() {
-        if (!$this->namespace)
-            throw new \Exception("Namespace não definido");
-        return $this->namespace;
-    }
-
     /*
      * @return \Zend\Form\Form
       public function getLastForm() {
@@ -147,11 +128,88 @@ abstract class MultiPageController extends BaseController implements MultiPageCo
             $subForm->setData(array());
 
         if ($subForm->isValid()) {
-            $this->getContainer()->$name = $subForm->getData();
+            $this->getContainer()->$name = $subForm->getData(FormInterface::VALUES_AS_ARRAY);
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * @param \Zend\Form\Form $form
+     * @return ViewModel $viewModel
+     */
+    abstract protected function renderTemplate($form);
+
+    private function renderStep($form) {
+        $form = $this->getMultiForm()->prepareSubForm($form, $this->subFormIsLast($form));
+        $viewModel = $this->renderTemplate($form);
+        if ($viewModel instanceof ViewModel) {
+            $messages = $this->jsMessage()->messages($this->flashMessenger()->getCurrentMessages());
+            $this->flashMessenger()->clearCurrentMessages();
+            $viewModel->setVariable('messages', $messages);
+        }
+        return $viewModel;
+    }
+
+    private function create() {
+        $entity = $this->hydrateFormData();
+        try {
+            $entity = $this->getService()->create($entity);
+            $this->flashMessenger()->addMessage(array(
+                'info' => "<strong>" . $this->getTranslator()->translate('s_created') . "</strong>"
+            ));
+            $this->setEntity($entity);
+        } catch (\Exception $ex) {
+            $this->flashMessenger()->addMessage(array(
+                'error' => "<strong>" . $this->getTranslator()->translate('e_not_created') . "</strong> ->" . $ex->getMessage())
+            );
+            $this->jsLog()->log($ex);
+        }
+        return false;
+    }
+
+    /**
+     * @return Object Entity Hydrated
+     */
+    public function hydrateFormData() {
+        $entityName = $this->getEntityName();
+        $entity = new $entityName;
+        $entity = $this->getHydrator()->hydrate($this->getMultiForm()->getData(), $entity);
+        return $entity;
+    }
+
+    public function novoAction() {
+        $this->destroyContainer();
+        $form = $this->getNextSubForm();
+        return $this->renderStep($form);
+    }
+
+    public function processAction() {
+        $form = $this->getCurrentSubForm();
+        if (!$form) {
+            $this->destroyContainer();
+            return $this->redirect()->toRoute(null, array('action' => 'novo'));
+        }
+
+        $data = array_merge_recursive($this->params()->fromFiles(), $this->params()->fromPost());
+        if (!$this->subFormIsValid($form, $data))
+            return $this->renderStep($form);
+
+        $formNext = $this->getNextSubForm();
+        if ($formNext)
+            return $this->renderStep($formNext);
+
+        if (!$this->formIsValid())
+            return $this->renderStep($form);
+
+        $this->create();
+        if ($this->getEntity()) {
+            $data = $this->params()->fromPost();
+            $result = $this->triggerRoutesAction($data[$form->getName()]['formActions']['submitValue']);
+            return $result ? $result : $this->redirect()->toRoute(null, array('action' => 'novo'));
+        } else
+            return $this->renderStep($form);
     }
 
     /**
@@ -162,8 +220,83 @@ abstract class MultiPageController extends BaseController implements MultiPageCo
         $this->container = null;
     }
 
+    public function setMultiForm($form) {
+        $this->multiForm = $form;
+        return $this;
+    }
+
+    public function getMultiForm() {
+        return $this->multiForm;
+    }
+
+    /**
+     * Pega o container,
+     * Se nao existe container, cria com namespace
+     * do controller atual
+     * @return \Zend\Session\Container
+     */
+    public function getContainer() {
+        if (null === $this->container) {
+            $this->container = new Session\Container($this->getNamespace());
+        }
+        return $this->container;
+    }
+
+    public function getNamespace() {
+        if (!$this->namespace)
+            throw new \Exception("Namespace não definido");
+        return $this->namespace;
+    }
+
     public function setNamespace($name) {
         $this->namespace = $name;
+        return $this;
+    }
+
+    public function getEntity() {
+        return $this->entity;
+    }
+
+    public function setEntity($entity) {
+        $this->entity = $entity;
+        return $this;
+    }
+
+    public function getEntityName() {
+        return $this->entityName;
+    }
+
+    public function setEntityName($entityName) {
+        $this->entityName = $entityName;
+        return $this;
+    }
+
+    public function getService() {
+        return $this->service;
+    }
+
+    public function setService($service) {
+        $this->service = $service;
+        return $this;
+    }
+
+    public function getTranslator() {
+        return $this->translator;
+    }
+
+    public function setTranslator($translator) {
+        $this->translator = $translator;
+        return $this;
+    }
+
+    public function getHydrator() {
+        if (!$this->hydrator)
+            $this->hydrator = new DoctrineObject($this->getServiceLocator()->get('Doctrine\ORM\EntityManager'));
+        return $this->hydrator;
+    }
+
+    public function setHydrator($hydrator) {
+        $this->hydrator = $hydrator;
     }
 
 }

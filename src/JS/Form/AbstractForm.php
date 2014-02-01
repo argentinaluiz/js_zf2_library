@@ -2,12 +2,12 @@
 
 namespace JS\Form;
 
-use Zend\Form\Fieldset;
+use Zend\Form\Form;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 
-class BaseFieldset extends Fieldset implements ObjectManagerAwareInterface {
+class AbstractForm extends Form implements ObjectManagerAwareInterface {
 
     protected $objectManager;
 
