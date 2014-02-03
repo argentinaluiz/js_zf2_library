@@ -37,13 +37,16 @@ class Log extends AbstractPlugin {
                 break;
         }
         if ($log = $this->getLog()) {
+            $params = null;
             try {
-                if ($this->getEvent()->getRequest()->isPost())
-                    $params = $this->getEvent()->getRequest()->getPost()->toArray();
-                else
-                    $params = $this->getEvent()->getRequest()->getQuery()->toArray();
+                if ($this->getEvent()->getRequest()) {
+                    if ($this->getEvent()->getRequest()->isPost())
+                        $params = $this->getEvent()->getRequest()->getPost()->toArray();
+                    else
+                        $params = $this->getEvent()->getRequest()->getQuery()->toArray();
+                }
             } catch (\Exception $exc) {
-                $params = null;
+
             }
 
             $log->log($priority, $ex->getMessage());
