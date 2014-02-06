@@ -26,7 +26,7 @@
         "doctrine/orm": "2.4.1",
         "firephp/firephp-core": "dev-master",
         "neilime/zf2-twb-bundle": "dev-master",
-        "zf-commons/zfc-twig": "1.1.5"
+        "zf-commons/zfc-twig": "dev-master"
     },
     "autoload": {
         "psr-0": {
