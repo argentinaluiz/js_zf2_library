@@ -72,7 +72,7 @@ class BaseService implements ServiceLocatorAwareInterface {
 
     public function update($entity) {
         try {
-            $this->getEntityManager()->persist($entity);
+            $this->getEntityManager()->merge($entity);
             $this->getEntityManager()->flush();
             return $entity;
         } catch (\Exception $ex) {
