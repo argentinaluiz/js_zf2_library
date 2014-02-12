@@ -130,7 +130,7 @@ abstract class BaseController extends RoutesActionController {
                 $result = $this->triggerRoutesAction($this->getFormUpdate()->get('formActions')->getSubmitValue()->getValue());
                 return $result ? $result : $this->redirect()->toRoute($this->getRoute(), array(
                             'action' => 'editar',
-                            $this->getIdentifierName() => $this->getEntity()->{'get' . ucfirst($this->getIdentifierName())}
+                            $this->getIdentifierName() => $this->getEntity()->{'get' . ucfirst($this->getIdentifierName())}()
                 ));
             }
         } else {

@@ -24,7 +24,12 @@ class Bootstrap {
         return static::$bootstrap;
     }
 
+    public static function getConfig() {
+        return include 'config/test.config.php';
+    }
+
 }
 
+ob_start();
 Bootstrap::init();
 
