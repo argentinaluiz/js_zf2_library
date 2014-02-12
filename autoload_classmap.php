@@ -50,7 +50,6 @@ return array(
   'JS\Util\EntityRepository'                                                                          => __DIR__ . '/src/JS/Util/EntityRepository.php',
   'JS\Util\OrderBy'                                                                                   => __DIR__ . '/src/JS/Util/OrderBy.php',
   'JS\Util\Serializor'                                                                                => __DIR__ . '/src/JS/Util/Serializor.php',
-  'util\StringUtil'                                                                                   => __DIR__ . '/src/JS/Util/StringUtil.php',
   'JS\Util\Timer'                                                                                     => __DIR__ . '/src/JS/Util/Timer.php',
   'JS\Validator\CgcAbstract'                                                                          => __DIR__ . '/src/JS/Validator/CgcAbstract.php',
   'JS\Validator\Cnpj'                                                                                 => __DIR__ . '/src/JS/Validator/Cnpj.php',
