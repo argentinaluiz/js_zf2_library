@@ -11,7 +11,7 @@ abstract class JSTestControllerCase extends AbstractHttpControllerTestCase {
 
     public function init() {
         $this->createDataBase();
-        $this->setApplicationConfig(\tests\Bootstrap::getConfig());
+        $this->setApplicationConfig(JSBootstrap::getConfig());
         $this->createTables();
     }
 
@@ -64,6 +64,9 @@ abstract class JSTestControllerCase extends AbstractHttpControllerTestCase {
     protected function tearDown() {
         $this->dropDatabase();
         parent::tearDown();
+        if (isset($this->object))
+            unset($this->object);
+        unset($this->application);
     }
 
     public function getConfig() {

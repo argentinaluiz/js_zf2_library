@@ -11,7 +11,8 @@ class JSTestCase extends \PHPUnit_Framework_TestCase {
 
     public function init() {
         $this->createDataBase();
-        $this->application = \tests\Bootstrap::getBootstrap();
+        $bootstrap = new JSBootstrap();
+        $this->application = $bootstrap->getBootstrap();
         $this->createTables();
     }
 
@@ -44,7 +45,6 @@ class JSTestCase extends \PHPUnit_Framework_TestCase {
     }
 
     public function createTables() {
-        $this->getEntityManager()->clear();
         $em = $this->getEntityManager();
 
         $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($em);
@@ -63,6 +63,10 @@ class JSTestCase extends \PHPUnit_Framework_TestCase {
 
     protected function tearDown() {
         $this->dropDatabase();
+        if (isset($this->object)) {
+            unset($this->object);
+        }
+        unset($this->application);
         parent::tearDown();
     }
 
