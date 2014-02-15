@@ -34,64 +34,45 @@ abstract class BaseController extends RoutesActionController {
 
     abstract public function find($opcoes);
 
-    private function update() {
-        $form = $this->getFormUpdate();
+    public function update($form) {
         $formName = $form->getName();
         $data = $this->params()->fromPost();
         if (!empty($formName) && $form->wrapElements())
             $data = $data[$formName];
-        try {
-            $codigo = $this->getIdentifierData($form, $data);
-            if ($codigo) {
-                $entity = $this->getRepository()->find($codigo);
-                if (!$entity)
-                    throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
-            } else
-                throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
-            $form->bind($entity);
-            $form->setData($data);
-
-            if ($form->isValid()) {
-                $entity = $this->getService()->update($entity);
-                $this->flashMessenger()->addMessage(array(
-                    'info' => "<strong>" . $this->getTranslator()->translate('s_updated') . "</strong>"
-                ));
-                $this->setEntity($entity);
-            }
-        } catch (\Exception $ex) {
-            if ($ex instanceof BaseException && $ex->getCode() == BaseException::ERROR_ENTITY_NOT_EXIST)
+        $codigo = $this->getIdentifierData($form, $data);
+        if ($codigo) {
+            $entity = $this->getRepository()->find($codigo);
+            if (!$entity) {
                 $form->setData($data);
-            $this->flashMessenger()->addMessage(array(
-                'error' => "<strong>" . $this->getTranslator()->translate('e_not_updated') . "</strong> ->" . $ex->getMessage())
-            );
-            $this->jsLog()->log($ex);
+                throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
+            }
+        } else {
+            $form->setData($data);
+            throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
+        }
+        $form->bind($entity);
+        $form->setData($data);
+
+        if ($form->isValid()) {
+            $entity = $this->getService()->update($entity);
+            $this->setEntity($entity);
+            return true;
         }
         return false;
     }
 
-    private function create() {
-        $form = $this->getFormCreate();
+    public function create($form, $entityName) {
         $formName = $form->getName();
         $data = $this->params()->fromPost();
         if (!empty($formName) && $form->wrapElements())
             $data = $data[$formName];
-        $entityName = $this->getEntityName();
         $entity = new $entityName;
         $form->bind($entity);
         $form->setData($data);
-        try {
-            if ($form->isValid()) {
-                $entity = $this->getService()->create($entity);
-                $this->flashMessenger()->addMessage(array(
-                    'info' => "<strong>" . $this->getTranslator()->translate('s_created') . "</strong>"
-                ));
-                $this->setEntity($entity);
-            }
-        } catch (\Exception $ex) {
-            $this->flashMessenger()->addMessage(array(
-                'error' => "<strong>" . $this->getTranslator()->translate('e_not_created') . "</strong> ->" . $ex->getMessage())
-            );
-            $this->jsLog()->log($ex);
+        if ($form->isValid()) {
+            $entity = $this->getService()->create($entity);
+            $this->setEntity($entity);
+            return true;
         }
         return false;
     }
@@ -104,7 +85,17 @@ abstract class BaseController extends RoutesActionController {
 
     public function novoAction() {
         if ($this->getRequest()->isPost()) {
-            $this->create();
+            try {
+                if ($this->create($this->getFormCreate(), $this->getEntityName()))
+                    $this->flashMessenger()->addMessage(array(
+                        'info' => "<strong>" . $this->getTranslator()->translate('s_created') . "</strong>"
+                    ));
+            } catch (\Exception $ex) {
+                $this->flashMessenger()->addMessage(array(
+                    'error' => "<strong>" . $this->getTranslator()->translate('e_not_created') . "</strong> ->" . $ex->getMessage())
+                );
+                $this->jsLog()->log($ex);
+            }
             if ($this->getEntity()) {
                 $result = $this->triggerRoutesAction($this->getFormCreate()->get('formActions')->getSubmitValue()->getValue());
                 if ($result)
@@ -125,7 +116,17 @@ abstract class BaseController extends RoutesActionController {
 
     public function editarAction() {
         if ($this->getRequest()->isPost()) {
-            $this->update();
+            try {
+                if ($this->update($this->getFormUpdate()))
+                    $this->flashMessenger()->addMessage(array(
+                        'info' => "<strong>" . $this->getTranslator()->translate('s_updated') . "</strong>"
+                    ));
+            } catch (\Exception $ex) {
+                $this->flashMessenger()->addMessage(array(
+                    'error' => "<strong>" . $this->getTranslator()->translate('e_not_updated') . "</strong> ->" . $ex->getMessage())
+                );
+                $this->jsLog()->log($ex);
+            }
             if ($this->getEntity()) {
                 $result = $this->triggerRoutesAction($this->getFormUpdate()->get('formActions')->getSubmitValue()->getValue());
                 return $result ? $result : $this->redirect()->toRoute($this->getRoute(), array(
