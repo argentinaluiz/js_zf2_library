@@ -34,7 +34,11 @@ abstract class BaseController extends RoutesActionController {
 
     abstract public function find($opcoes);
 
-    public function update($form) {
+    /**
+     * @param \Zend\Form\Form $form
+     */
+    public function updateOrCreate($form, $entityName) {
+        $checkEntityNotExist = false;
         $formName = $form->getName();
         $data = $this->params()->fromPost();
         if (!empty($formName) && $form->wrapElements())
@@ -43,13 +47,42 @@ abstract class BaseController extends RoutesActionController {
         if ($codigo) {
             $entity = $this->getRepository()->find($codigo);
             if (!$entity) {
-                $form->setData($data);
-                throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
+                $entity = new $entityName;
+                $checkEntityNotExist = true;
             }
         } else {
-            $form->setData($data);
-            throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
+            $entity = new $entityName;
+            $checkEntityNotExist = true;
         }
+        $form->bind($entity);
+        $form->setData($data);
+
+        if ($form->isValid()) {
+            if (!$checkEntityNotExist) {
+                $entity = $this->getService()->update($entity);
+                $this->setEntity($entity);
+                return 1;
+            } else {
+                $entity = $this->getService()->create($entity);
+                $this->setEntity($entity);
+                return 2;
+            }
+        }
+        return false;
+    }
+
+    public function update($form) {
+        $formName = $form->getName();
+        $data = $this->params()->fromPost();
+        if (!empty($formName) && $form->wrapElements())
+            $data = $data[$formName];
+        $codigo = $this->getIdentifierData($form, $data);
+        if ($codigo) {
+            $entity = $this->getRepository()->find($codigo);
+            if (!$entity)
+                throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
+        } else
+            throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
         $form->bind($entity);
         $form->setData($data);
 
@@ -114,13 +147,30 @@ abstract class BaseController extends RoutesActionController {
         ));
     }
 
+    public function loadEntityToForm($form) {
+        $codigo = $this->getEvent()->getRouteMatch()->getParam($this->getIdentifierName());
+        if ($codigo != null) {
+            $registro = $this->getRepository()->find($codigo);
+            if ($registro == null)
+                throw new BaseException($this->getTranslator()->translate('e_entity_not_found', BaseException::ERROR_ENTITY_NOT_EXIST));
+            $form->bind($registro);
+        } else
+            throw new BaseException($this->getTranslator()->translate('e_entity_not_found', BaseException::ERROR_ENTITY_NOT_EXIST));
+    }
+
     public function editarAction() {
         if ($this->getRequest()->isPost()) {
             try {
-                if ($this->update($this->getFormUpdate()))
-                    $this->flashMessenger()->addMessage(array(
-                        'info' => "<strong>" . $this->getTranslator()->translate('s_updated') . "</strong>"
-                    ));
+                $result = $this->updateOrCreate($this->getFormUpdate(), $this->getEntityName());
+                if ($result)
+                    if ($result == 1)
+                        $this->flashMessenger()->addMessage(array(
+                            'info' => "<strong>" . $this->getTranslator()->translate('s_updated') . "</strong>"
+                        ));
+                    else
+                        $this->flashMessenger()->addMessage(array(
+                            'info' => "<strong>" . $this->getTranslator()->translate('s_created') . "</strong>"
+                        ));
             } catch (\Exception $ex) {
                 $this->flashMessenger()->addMessage(array(
                     'error' => "<strong>" . $this->getTranslator()->translate('e_not_updated') . "</strong> ->" . $ex->getMessage())
@@ -135,22 +185,15 @@ abstract class BaseController extends RoutesActionController {
                 ));
             }
         } else {
-            $codigo = $this->getEvent()->getRouteMatch()->getParam($this->getIdentifierName());
-            if ($codigo != null) {
-                try {
-                    $registro = $this->getRepository()->find($codigo);
-                    if ($registro == null)
-                        throw new BaseException($this->getTranslator()->translate('e_entity_not_found', BaseException::ERROR_ENTITY_NOT_EXIST));
-                    $this->getFormUpdate()->bind($registro);
-                } catch (\Exception $ex) {
-                    $this->flashMessenger()->addMessage(array(
-                        'error' => "<strong>" . $this->getTranslator()->translate('e_not_load_entity') . "</strong> ->" . $ex->getMessage()
-                    ));
-                    $this->jsLog()->log($ex);
-                    return $this->redirect()->toRoute(null, array('action' => 'novo'));
-                }
-            } else
-                return $this->redirect()->toRoute(null, array('action' => 'novo'));
+            try {
+                $this->loadEntityToForm($this->getFormUpdate());
+            } catch (\Exception $ex) {
+                $this->flashMessenger()->addMessage(array(
+                    'error' => "<strong>" . $this->getTranslator()->translate('e_not_load_entity') . "</strong> ->" . $ex->getMessage()
+                ));
+                $this->jsLog()->log($ex);
+                return $this->redirect()->toRoute($this->getRoute(), array('action' => 'novo'));
+            }
         }
         $messages = $this->jsMessage()->messagesComplex($this->flashMessenger()->getCurrentMessages());
         $this->flashMessenger()->clearCurrentMessages();

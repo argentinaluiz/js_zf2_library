@@ -36,4 +36,8 @@ class AbstractActionController extends ZendAbstractActionController {
         return $this->getServiceLocator()->get('FormElementManager');
     }
 
+    public function getEntityManager() {
+        return $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
+    }
+
 }

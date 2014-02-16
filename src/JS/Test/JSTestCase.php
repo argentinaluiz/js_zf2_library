@@ -9,14 +9,7 @@ class JSTestCase extends \PHPUnit_Framework_TestCase {
      */
     protected $application;
 
-    public function init() {
-        $this->createDataBase();
-        $bootstrap = new JSBootstrap();
-        $this->application = $bootstrap->getBootstrap();
-        $this->createTables();
-    }
-
-    public function createDataBase() {
+    public static function createDataBase() {
         $config = include getcwd() . '/config/autoload/doctrine.test.php';
         $params = $config['doctrine']['connection']['orm_default']['params'];
         $host = $params['host'];
@@ -30,7 +23,7 @@ class JSTestCase extends \PHPUnit_Framework_TestCase {
         $dbh = null;
     }
 
-    public function dropDatabase() {
+    public static function dropDatabase() {
         $config = include getcwd() . '/config/autoload/doctrine.test.php';
         $params = $config['doctrine']['connection']['orm_default']['params'];
         $host = $params['host'];
@@ -56,17 +49,24 @@ class JSTestCase extends \PHPUnit_Framework_TestCase {
         $schemaTool->createSchema($classes);
     }
 
+    public static function setUpBeforeClass() {
+        self::createDataBase();
+        parent::setUpBeforeClass();
+    }
+
+    public static function tearDownAfterClass() {
+        self::dropDatabase();
+        parent::tearDownAfterClass();
+    }
+
     protected function setUp() {
-        $this->init();
+        $bootstrap = new JSBootstrap();
+        $this->application = $bootstrap->getBootstrap();
+        $this->createTables();
         parent::setUp();
     }
 
     protected function tearDown() {
-        $this->dropDatabase();
-        if (isset($this->object)) {
-            unset($this->object);
-        }
-        unset($this->application);
         parent::tearDown();
     }
 

@@ -9,13 +9,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
 abstract class JSTestControllerCase extends AbstractHttpControllerTestCase {
 
-    public function init() {
-        $this->createDataBase();
-        $this->setApplicationConfig(JSBootstrap::getConfig());
-        $this->createTables();
-    }
-
-    public function createDataBase() {
+    public static function createDataBase() {
         $config = include getcwd() . '/config/autoload/doctrine.test.php';
         $params = $config['doctrine']['connection']['orm_default']['params'];
         $host = $params['host'];
@@ -29,7 +23,7 @@ abstract class JSTestControllerCase extends AbstractHttpControllerTestCase {
         $dbh = null;
     }
 
-    public function dropDatabase() {
+    public static function dropDatabase() {
         $config = include getcwd() . '/config/autoload/doctrine.test.php';
         $params = $config['doctrine']['connection']['orm_default']['params'];
         $host = $params['host'];
@@ -44,7 +38,6 @@ abstract class JSTestControllerCase extends AbstractHttpControllerTestCase {
     }
 
     public function createTables() {
-        $this->getEntityManager()->clear();
         $em = $this->getEntityManager();
 
         $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($em);
@@ -56,17 +49,24 @@ abstract class JSTestControllerCase extends AbstractHttpControllerTestCase {
         $schemaTool->createSchema($classes);
     }
 
+    public static function setUpBeforeClass() {
+        self::createDataBase();
+        parent::setUpBeforeClass();
+    }
+
+    public static function tearDownAfterClass() {
+        self::dropDatabase();
+        parent::tearDownAfterClass();
+    }
+
     protected function setUp() {
-        $this->init();
+        $this->setApplicationConfig(JSBootstrap::getConfig());
+        $this->createTables();
         parent::setUp();
     }
 
     protected function tearDown() {
-        $this->dropDatabase();
         parent::tearDown();
-        if (isset($this->object))
-            unset($this->object);
-        unset($this->application);
     }
 
     public function getConfig() {
