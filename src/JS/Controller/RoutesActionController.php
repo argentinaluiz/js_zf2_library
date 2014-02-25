@@ -50,22 +50,25 @@ class RoutesActionController extends AbstractActionController {
      * )
      */
     public function initRoutesAction() {
-        $this->addRoutesAction('save', function($controller) {
-            $url = $controller->url()->fromRoute($controller->getRoute(), array(
-                'action' => 'editar',
-                $controller->getIdentifierName() => $controller->getEntity()->{'get' . ucfirst($controller->getIdentifierName())}()
-            ));
-            return $url;
-        });
+        $routesAction = $this->getRoutesAction();
+        if ($routesAction['save'] == '')
+            $this->addRoutesAction('save', function($controller) {
+                $url = $controller->url()->fromRoute($controller->getRoute(), array(
+                    'action' => 'editar',
+                    $controller->getIdentifierName() => $controller->getEntity()->{'get' . ucfirst($controller->getIdentifierName())}()
+                ));
+                return $url;
+            });
 
+        if ($routesAction['save_and_close'] == '')
+            $this->addRoutesAction('save_and_close', $this->url()->fromRoute($this->getRoute(), array(
+                        'action' => 'consultar',
+            )));
 
-        $this->addRoutesAction('save_and_close', $this->url()->fromRoute($this->getRoute(), array(
-                    'action' => 'consultar',
-        )));
-
-        $this->addRoutesAction('save_and_new', $this->url()->fromRoute($this->getRoute(), array(
-                    'action' => 'novo',
-        )));
+        if ($routesAction['save_and_new'] == '')
+            $this->addRoutesAction('save_and_new', $this->url()->fromRoute($this->getRoute(), array(
+                        'action' => 'novo',
+            )));
     }
 
     public function getRoutesAction() {
