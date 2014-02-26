@@ -53,7 +53,7 @@ abstract class MultiPageForm extends AbstractForm implements MultiPageFormInterf
             $this->addSubmitButton($subForm);
             $this->addCancelButton($subForm);
         } else
-            $subForm->add(new FormActionsFieldset());
+            $subForm->add(new ActionsFieldset());
         return $subForm;
     }
 

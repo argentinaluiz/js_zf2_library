@@ -4,12 +4,14 @@ namespace JS\Form;
 
 use Zend\Form\Fieldset;
 
-class FormActionsFieldset extends Fieldset {
+class ActionsFieldset extends Fieldset {
 
     private $modelCodigo = 'codigo';
 
     public function __construct($name = 'formActions', $options = array()) {
         parent::__construct($name, $options);
+
+        $this->setModelCodigo(isset($this->options['model-codigo']) ? $this->options['model-codigo'] : 'codigo');
 
         $this->add(array(
             'type' => 'Hidden',
@@ -24,35 +26,36 @@ class FormActionsFieldset extends Fieldset {
             'type' => 'Button',
             'name' => 'btnSalvar',
             'attributes' => array(
-                'data-ng-click' => "submitValue = 'save'",
-                'title' => 'Salvar',
-            ),
-            'options' => array(
-                'label' => "<span class='glyphicon glyphicon-floppy-disk'></span> Salvar"
-            )
-        ));
-
-        $this->add(array(
-            'type' => 'Button',
-            'name' => 'btnSalvarIncluir',
-            'attributes' => array(
-                'data-ng-click' => "submitValue = 'save_and_new'",
-                'title' => 'Salvar e Incluir um Novo',
-            ),
-            'options' => array(
-                'label' => "<span class='glyphicon glyphicon-pencil'></span> Salvar e Incluir"
-            )
-        ));
-
-        $this->add(array(
-            'type' => 'Button',
-            'name' => 'btnSalvarConcluir',
-            'attributes' => array(
+                'class' => 'btn btn-primary',
                 'data-ng-click' => "submitValue = 'save_and_close'",
                 'title' => 'Salvar e Concluir',
+                'type' => 'submit'
             ),
             'options' => array(
-                'label' => "<span class='glyphicon glyphicon-new-window'></span> Salvar e Concluir"
+                'label' => "Salvar e Concluir",
+                'glyphicon' => 'new-window',
+                'dropdown' => array(
+                    'split' => true,
+                    'dropup' => true,
+                    'items' => array(
+                        array(
+                            'label' => 'Salvar',
+                            'item_attributes' => array(
+                                'data-ng-click' => "submitValue = 'save'",
+                                'title' => 'Salvar',
+                                'data-ng-triggersubmit' => ''
+                            )
+                        ),
+                        array(
+                            'label' => 'Salvar e Incluir',
+                            'item_attributes' => array(
+                                'data-ng-click' => "submitValue = 'save_and_new'",
+                                'title' => 'Salvar e Incluir um Novo',
+                                'data-ng-triggersubmit' => ''
+                            )
+                        ),
+                    )
+                )
             )
         ));
 
@@ -64,12 +67,11 @@ class FormActionsFieldset extends Fieldset {
                 'title' => 'Cancelar',
             ),
             'options' => array(
-                'label' => "<span class='glyphicon glyphicon-floppy-remove'></span>"
-            )
+                'label' => "",
+                'glyphicon' => 'floppy-remove'
+            ),
         ));
 
-
-        $this->setModelCodigo(isset($this->options['model-codigo']) ? $this->options['model-codigo'] : 'codigo');
         $this->add(array(
             'type' => 'Button',
             'name' => 'btnExcluir',
@@ -80,7 +82,8 @@ class FormActionsFieldset extends Fieldset {
                 'data-ng-disabled' => $this->getModelCodigo() . " == ''"
             ),
             'options' => array(
-                'label' => "<span class='glyphicon glyphicon-trash'></span>"
+                'label' => "",
+                'glyphicon' => 'trash'
             )
         ));
     }

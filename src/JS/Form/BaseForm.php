@@ -2,21 +2,21 @@
 
 namespace JS\Form;
 
-use JS\Form\FormActionsFieldset;
+use JS\Form\ActionsFieldset;
 use Doctrine\Common\Persistence\ObjectManager;
 
 class BaseForm extends AbstractForm {
 
     private $modelCodigo = 'codigo';
-    private $fielsetButtons;
+    private $actions;
 
     public function __construct(ObjectManager $objectManager, $name = null, $options = array()) {
         parent::__construct($objectManager, $name, $options);
     }
 
-    public function addFormActions($options = array()) {
-        $this->fielsetButtons = new FormActionsFieldset('formActions', array('model-codigo' => $this->modelCodigo));
-        $this->add($this->fielsetButtons);
+    public function addActions($options = array()) {
+        $this->actions = new ActionsFieldset('formActions', array('model-codigo' => $this->modelCodigo));
+        $this->add($this->actions);
     }
 
     public function getModelCodigo() {
@@ -30,12 +30,12 @@ class BaseForm extends AbstractForm {
     /**
      * @return \Zend\Form\Fieldset
      */
-    public function getFielsetButtons() {
-        return $this->fielsetButtons;
+    public function getActions() {
+        return $this->actions;
     }
 
-    public function setFielsetButtons($fielsetButtons) {
-        $this->fielsetButtons = $fielsetButtons;
+    public function setActions($fielsetButtons) {
+        $this->actions = $fielsetButtons;
     }
 
 }
