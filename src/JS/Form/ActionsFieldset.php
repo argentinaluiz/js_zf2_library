@@ -104,4 +104,17 @@ class ActionsFieldset extends Fieldset {
         return $this->get('submitValue');
     }
 
+    public function addSaveAction($action = array()) {
+        $options = $this->get('btnSalvar')->getOptions();
+        $options['dropdown']['items'][] = array(
+            'label' => $action['label'],
+            'item_attributes' => array(
+                'data-ng-click' => sprintf("submitValue = '%s'", $action['value']),
+                'title' => $action['title'],
+                'data-ng-triggersubmit' => ''
+            )
+        );
+        $this->get('btnSalvar')->setOptions($options);
+    }
+
 }
