@@ -11,9 +11,9 @@ abstract class MultiPageForm extends AbstractForm implements MultiPageFormInterf
 
     protected $serviceLocator;
 
-    public function __construct($sm, $name = null, $options = array()) {
-        parent::__construct($sm->get('Doctrine\ORM\EntityManager'), $name, $options);
-        $this->setServiceLocator($sm);
+    public function __construct($serviceLocator, $name = null, $options = array()) {
+        parent::__construct($serviceLocator->get('Doctrine\ORM\EntityManager'), $name, $options);
+        $this->setServiceLocator($serviceLocator);
     }
 
     public function addCancelButton(Form $subForm) {

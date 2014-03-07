@@ -21,17 +21,17 @@ class JSArray extends AbstractPlugin {
      *                            'id' => '1',<br/> 
      *                            'label' => 'laranja')<br/>
      *                         )
-     * @param array $new_keys array com indices do novo array
+     * @param array $newKeys array com indices do novo array
      * @param array $arrays array com os valores do novo array
      * @return array
      */
-    public function array_change_keys(array $new_keys, array $arrays) {
+    public function array_change_keys(array $newKeys, array $arrays) {
         $tam = count($arrays);
-        $new_array = array();
+        $newArray = array();
         for ($i = 0; $i < $tam; $i++) {
-            $new_array[$i] = array_combine($new_keys, $arrays[$i]);
+            $newArray[$i] = array_combine($newKeys, $arrays[$i]);
         }
-        return $new_array;
+        return $newArray;
     }
 
     /**

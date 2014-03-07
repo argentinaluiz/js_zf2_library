@@ -15,7 +15,7 @@ class BaseForm extends AbstractForm {
     }
 
     public function addActions($options = array()) {
-        $this->actions = new ActionsFieldset('formActions', array('model-codigo' => $this->modelCodigo));
+        $this->actions = new ActionsFieldset('formActions', array('model-codigo' => $this->modelCodigo), $options);
         $this->add($this->actions);
     }
 

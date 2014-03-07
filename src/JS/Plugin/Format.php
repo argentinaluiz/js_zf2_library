@@ -22,8 +22,8 @@ class Format extends AbstractPlugin {
      */
     public function formErros($form) {
         $msg = "";
-        $array_message = $form->getMessages();
-        foreach ($array_message as $elemName => $messages) {
+        $arrayMessage = $form->getMessages();
+        foreach ($arrayMessage as $elemName => $messages) {
             foreach ($messages as $message) {
                 $label = "";
                 $elemName = $form->get($elemName);

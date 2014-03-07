@@ -24,10 +24,10 @@ class Log extends AbstractPlugin {
 
     /**
      * Cria o log,com a excecao e a prioridade(ERR, INFO...)
-     * @param \Exception $ex
+     * @param \Exception $exception
      * @param mixed $priority
      */
-    public function log($ex, $priority = Logger::ERR) {
+    public function log($exception, $priority = Logger::ERR) {
         switch ($priority) {
             case "error":
                 $priority = Logger::ERR;
@@ -38,18 +38,14 @@ class Log extends AbstractPlugin {
         }
         if ($log = $this->getLog()) {
             $params = null;
-            try {
-                if ($this->getEvent()->getRequest()) {
-                    if ($this->getEvent()->getRequest()->isPost())
-                        $params = $this->getEvent()->getRequest()->getPost()->toArray();
-                    else
-                        $params = $this->getEvent()->getRequest()->getQuery()->toArray();
-                }
-            } catch (\Exception $exc) {
-
+            if ($this->getEvent()->getRequest()) {
+                if ($this->getEvent()->getRequest()->isPost())
+                    $params = $this->getEvent()->getRequest()->getPost()->toArray();
+                else
+                    $params = $this->getEvent()->getRequest()->getQuery()->toArray();
             }
 
-            $log->log($priority, $ex->getMessage());
+            $log->log($priority, $exception->getMessage());
 
             if (getenv('APPLICATION_ENV') == 'production') {
                 if ($params)
@@ -60,7 +56,7 @@ class Log extends AbstractPlugin {
                     $log->log($priority, $params);
             }
 
-            $log->log($priority, $ex);
+            $log->log($priority, $exception);
         }
     }
 

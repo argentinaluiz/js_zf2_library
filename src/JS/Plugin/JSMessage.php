@@ -49,7 +49,7 @@ class JSMessage extends AbstractPlugin {
             }
             else {
                 $ul = "<ul class='list-unstyled'>";
-                foreach ($msgs as $key => $value) {
+                foreach ($msgs as $value) {
                     $ul.="<li>" . $value[key($value)] . "</li>";
                 }
                 $ul.= "</ul>";

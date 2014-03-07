@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityRepository;
 
 class BaseEntityRepository extends EntityRepository {
 
-    const aliasEntity = 'em';
+    const ALIAS_ENTITY = 'em';
 
     private $select;
     private $order;
@@ -15,8 +15,8 @@ class BaseEntityRepository extends EntityRepository {
     public $orderByMap;
     public $camposSelectList;
 
-    public function __construct($em, $class) {
-        parent::__construct($em, $class);
+    public function __construct($entityManager, $class) {
+        parent::__construct($entityManager, $class);
     }
 
     public function getSelectList() {
@@ -33,7 +33,7 @@ class BaseEntityRepository extends EntityRepository {
 
     public function getSelectCount() {
         $primaryKey = $this->getClassMetadata()->getSingleIdentifierFieldName();
-        $this->setSelect("count(" . self::aliasEntity . "." . $primaryKey . ")");
+        $this->setSelect("count(" . self::ALIAS_ENTITY . "." . $primaryKey . ")");
         return $this->getSelect();
     }
 

@@ -26,11 +26,11 @@ class BaseService implements ServiceLocatorAwareInterface {
     /**
      * Set up base BaseService options
      *
-     * @param \Doctrine\ORM\EntityManager $em
+     * @param \Doctrine\ORM\EntityManager $entityManager
      * @return void
      */
-    public function __construct($em, $translator = null, $entityName = null) {
-        $this->setEntityManager($em);
+    public function __construct($entityManager, $translator = null, $entityName = null) {
+        $this->setEntityManager($entityManager);
         $this->setEntityName($entityName);
         $this->setTranslator($translator);
     }
@@ -132,27 +132,27 @@ class BaseService implements ServiceLocatorAwareInterface {
             $this->entityManager->getConnection()->close();
     }
 
-    public function chooseHandleTransactionException(\Exception $ex) {
-        if ($ex->getPrevious() instanceof \PDOException)
-            $this->handleTransactionPDOException($ex);
+    public function chooseHandleTransactionException(\Exception $exception) {
+        if ($exception->getPrevious() instanceof \PDOException)
+            $this->handleTransactionPDOException($exception);
         else
-            $this->handleTransactionException($ex);
+            $this->handleTransactionException($exception);
     }
 
-    public function handleTransactionException(\Exception $ex) {
+    public function handleTransactionException(\Exception $exception) {
         $this->rollback();
         $this->close();
-        throw $ex;
+        throw $exception;
     }
 
-    public function handleTransactionPDOException(\Exception $ex) {
+    public function handleTransactionPDOException(\Exception $exception) {
         $this->rollback();
         $this->close();
-        switch ($ex->getPrevious()->errorInfo[1]) {
+        switch ($exception->getPrevious()->errorInfo[1]) {
             case 1451:
-                throw new BaseException($this->getTranslator()->translate('e_pdo_1451'), BaseException::PDO_ERROR_DELETE_REGISTRO, $ex);
+                throw new BaseException($this->getTranslator()->translate('e_pdo_1451'), BaseException::PDO_ERROR_DELETE_REGISTRO, $exception);
             default :
-                throw $ex;
+                throw $exception;
         }
     }
 
@@ -166,10 +166,10 @@ class BaseService implements ServiceLocatorAwareInterface {
 
     /**
      * Set entity manager
-     * @param \Doctrine\ORM\EntityManager $em entity manager to set
+     * @param \Doctrine\ORM\EntityManager $entityManager entity manager to set
      */
-    public function setEntityManager($em) {
-        $this->entityManager = $em;
+    public function setEntityManager($entityManager) {
+        $this->entityManager = $entityManager;
     }
 
     /**

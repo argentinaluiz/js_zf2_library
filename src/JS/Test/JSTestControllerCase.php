@@ -38,11 +38,11 @@ abstract class JSTestControllerCase extends AbstractHttpControllerTestCase {
     }
 
     public function createTables() {
-        $em = $this->getEntityManager();
+        $entityManager = $this->getEntityManager();
 
-        $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($em);
+        $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($entityManager);
 
-        $cmf = $em->getMetadataFactory();
+        $cmf = $entityManager->getMetadataFactory();
         $classes = $cmf->getAllMetadata();
 
         $schemaTool->dropDatabase();

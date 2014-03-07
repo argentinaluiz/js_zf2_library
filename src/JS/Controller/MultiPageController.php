@@ -90,8 +90,9 @@ abstract class MultiPageController extends RoutesActionController implements Mul
      */
     public function getSavedForms() {
         $savedForms = array();
-        foreach ($this->getContainer() as $key => $value)
-            $savedForms[] = $key;
+        $keys = array_keys($this->getContainer());
+        foreach ($keys as $value)
+            $savedForms[] = $value;
 
         return $savedForms;
     }
