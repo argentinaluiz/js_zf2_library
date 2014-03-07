@@ -63,9 +63,12 @@ abstract class BaseController extends RoutesActionController {
                 $this->setEntity($entity);
                 return 1;
             } else {
-                $entity = $this->getService()->create($entity);
-                $this->setEntity($entity);
-                return 2;
+                if ($this->getFormCreate()) {
+                    $entity = $this->getService()->create($entity);
+                    $this->setEntity($entity);
+                    return 2;
+                }
+                throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
             }
         }
         return false;
