@@ -35,28 +35,27 @@
                         {% do navigation('navigation').menu().setPartial(partial) %}
                         {{ navigation('navigation').menu().render()|raw }}
                     </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#"><strong>{{ identity().getNome() }}</strong></a></li>
-                    <li class="dropdown">
-                        <a data-toggle="dropdown" class="dropdown-toggle" href="javascript:void(0)" title='Mais Opções'>
-                            <span class='glyphicon glyphicon-list'></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#">Editar Usuário</a></li>
-                            <li><a href="#">Mudar Senha</a></li>
-                            <li class="divider"></li>
-                            <li><a href="{{ url('logout') }}">
-                                    <span class='glyphicon glyphicon-log-out'></span>&nbsp;Sair
-                                </a></li>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="#"><strong>{{ identity().getNome() }}</strong></a></li>
+                            <li class="dropdown">
+                                <a data-toggle="dropdown" class="dropdown-toggle" href="javascript:void(0)" title='Mais Opções'>
+                                    <span class='glyphicon glyphicon-list'></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="{{url('usuario-admin/default',{action: 'editar',codigo: identity().getCodigo()})}}">Editar Usuário</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="{{ url('logout') }}">
+                                            <span class='glyphicon glyphicon-log-out'></span>&nbsp;Sair
+                                        </a></li>
+                                </ul>
+                            </li>
                         </ul>
-                    </li>
-                </ul>
+                    </div>
+            </nav>
+            <div id='container' class="container col-lg-12">
+                <div class='row'>
+                    <div id='content' class='col-md-12'>{{ content|raw }}</div>
+                </div>
             </div>
-        </nav>
-        <div id='container' class="container col-lg-12">
-            <div class='row'>
-                <div id='content' class='col-md-12'>{{ content|raw }}</div>
-            </div>
-        </div>
-    </body>
-</html>
+        </body>
+    </html>
