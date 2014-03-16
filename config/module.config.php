@@ -14,34 +14,13 @@ return array(
             'jsDataTable' => '\JS\Plugin\DataTable'
         ),
         'factories' => array(
-            'jsLog' => function($sm) {
-        $config = $sm->getServiceLocator()->get('Config');
-        $pathLog = $config['js_library']['path_log'];
-        if (empty($pathLog))
-            throw new \Exception("Especique o arquivo para armazenar o log");
-        $log = new \JS\Plugin\Log();
-        $writer = 'production' == getenv('APPLICATION_ENV') ?
-                new \Zend\Log\Writer\Stream($pathLog) :
-                new Zend\Log\Writer\FirePhp();
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-        $log->setLog($logger);
-        return $log;
-    },
+            'jsLog' => 'JS\Plugin\LogFactory',
         ),
     ),
     'service_manager' => array(
         'factories' => array(
-            'jstranslator' => function($sm) {
-        $factory = new JS\Translator\TranslatorServiceFactory;
-        $instance = $factory->createService($sm);
-        return $instance;
-    },
-            'JS\Service\BaseService' => function($sm) {
-        $factory = new JS\Service\BaseServiceFactory();
-        $instance = $factory->createService($sm);
-        return $instance;
-    },
+            'jstranslator' => 'JS\Translator\TranslatorServiceFactory',
+            'JS\Service\BaseService' => 'JS\Service\BaseServiceFactory'
         ),
     ),
     'translator' => array(
