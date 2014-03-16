@@ -86,7 +86,7 @@ abstract class JSTestControllerCase extends AbstractHttpControllerTestCase {
 
     public function getController($controllerClass, $controllerName, $action) {
         $config = $this->getConfig();
-        $controller = $config['controllers']['factories'][$controllerClass]($this->getServiceManager()->get('Controller\Loader'));
+        $controller = $this->getServiceManager()->get('ControllerLoader')->get($controllerClass);
         $event = new MvcEvent();
         $routerConfig = isset($config['router']) ? $config['router'] : array();
         $router = TreeRouteStack::factory($routerConfig);
