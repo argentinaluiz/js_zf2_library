@@ -15,7 +15,7 @@ class LogFactory implements FactoryInterface {
         $log = new \JS\Plugin\Log();
         $writer = 'production' == getenv('APPLICATION_ENV') ?
                 new \Zend\Log\Writer\Stream($pathLog) :
-                new Zend\Log\Writer\FirePhp();
+                new \Zend\Log\Writer\FirePhp();
         $logger = new \Zend\Log\Logger();
         $logger->addWriter($writer);
         $log->setLog($logger);
