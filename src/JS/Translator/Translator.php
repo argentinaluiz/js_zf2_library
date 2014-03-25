@@ -25,7 +25,7 @@ class Translator extends \Zend\I18n\Translator\Translator {
             $this->setTextDomain($textDomain);
         if ($locale != null)
             $this->setLocale($locale);
-        parent::translate($message, $this->textDomain, $this->locale);
+        return parent::translate($message, $this->textDomain, $this->locale);
     }
 
 }
