@@ -17,8 +17,8 @@
     "homepage": "https://github.com/argentinaluiz/js_zf2_library",
     "minimum-stability": "dev",
     "require": {
-        "php": ">=5.3.3",
-        "zendframework/zendframework": ">2.1.3",
+        "php": ">=5.3.23",
+        "zendframework/zendframework": ">=2.3.0",
         "zendframework/zendframework1": "1.12",
         "doctrine/doctrine-orm-module": ">=0.7.0",
         "doctrine/common": "2.4.*",
