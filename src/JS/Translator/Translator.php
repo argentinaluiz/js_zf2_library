@@ -20,8 +20,12 @@ class Translator extends \Zend\I18n\Translator\Translator {
         return $this;
     }
 
-    public function translate($message) {
-        return parent::translate($message, $this->getTextDomain(), $this->getLocale());
+    public function translate($message, $textDomain = 'default', $locale = null) {
+        if ($textDomain != 'default')
+            $this->setTextDomain($textDomain);
+        if ($locale != null)
+            $this->setLocale($locale);
+        parent::translate($message, $this->textDomain, $this->locale);
     }
 
 }
