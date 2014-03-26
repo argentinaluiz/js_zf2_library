@@ -21,15 +21,15 @@ class Module {
 
     public function getAutoloaderConfig() {
         return array(
-            'Zend\Loader\StandardAutoloader' => array(
+            'Zend\Loader\StandardAutoloader' => [
                 'autoregister_zf' => true,
-                'prefixes' => array(
+                'prefixes' => [
                     'Zend_' => __DIR__ . "/../../vendor/zendframework/zendframework1/library/Zend"
-                ),
-            ),
-            'Zend\Loader\ClassMapAutoloader' => array(
+                ],
+            ],
+            'Zend\Loader\ClassMapAutoloader' => [
                 __DIR__ . '/autoload_classmap.php',
-            ),
+            ],
         );
     }
 
@@ -52,9 +52,7 @@ class Module {
                 $sm = $e->getApplication()->getServiceManager();
                 $config = $sm->get('Config');
                 $e->getApplication()->getServiceManager()->get('Controller\Plugin\Manager')->get('jsLog')->log($exception, 2);
-                $viewModel = new \Zend\View\Model\ViewModel(array(
-                    'exception' => $exception
-                ));
+                $viewModel = new \Zend\View\Model\ViewModel(['exception' => $exception]);
                 if ($e->getRequest()->isXmlHttpRequest()) {
                     $viewModel->setTemplate($config['js_library']['error_ajax_exception']);
                     $e->getApplication()->getServiceManager()->get('ViewRenderer')->render($viewModel);

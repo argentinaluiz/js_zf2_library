@@ -20,10 +20,10 @@ class Number extends AbstractFilter {
      * @param string $value Numero americano ou brasileiro para ser convertido
      */
     public function filter($value) {
-        if (!Zend_Locale_Format::isNumber($value, array('locale' => new Zend_Locale('pt_BR')))) {
-            return Zend_Locale_Format::toNumber($value, array('locale' => new Zend_Locale('pt_BR')));
+        if (!Zend_Locale_Format::isNumber($value, ['locale' => new Zend_Locale('pt_BR')])) {
+            return Zend_Locale_Format::toNumber($value, ['locale' => new Zend_Locale('pt_BR')]);
         } else {
-            return Zend_Locale_Format::getNumber($value, array('locale' => new Zend_Locale('pt_BR')));
+            return Zend_Locale_Format::getNumber($value, ['locale' => new Zend_Locale('pt_BR')]);
         }
         return $value;
     }

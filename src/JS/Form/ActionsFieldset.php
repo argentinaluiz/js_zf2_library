@@ -8,84 +8,84 @@ class ActionsFieldset extends Fieldset {
 
     private $modelCodigo = 'codigo';
 
-    public function __construct($name = 'formActions', $options = array()) {
+    public function __construct($name = 'formActions', $options = []) {
         parent::__construct($name, $options);
 
         $this->setModelCodigo(isset($this->options['model-codigo']) ? $this->options['model-codigo'] : 'codigo');
 
-        $this->add(array(
+        $this->add([
             'type' => 'Hidden',
             'name' => 'submitValue',
-            'attributes' => array(
+            'attributes' => [
                 'data-ng-init' => "submitValue = 'save'",
                 'value' => '{{ submitValue }}'
-            )
-        ));
+            ]
+        ]);
 
-        $this->add(array(
+        $this->add([
             'type' => 'Button',
             'name' => 'btnSalvar',
-            'attributes' => array(
+            'attributes' => [
                 'class' => 'btn btn-primary',
                 'data-ng-click' => "submitValue = 'save_and_close'",
                 'title' => 'Salvar e Concluir',
                 'type' => 'submit'
-            ),
-            'options' => array(
+            ],
+            'options' => [
                 'label' => "Salvar e Concluir",
                 'glyphicon' => 'new-window',
-                'dropdown' => array(
+                'dropdown' => [
                     'split' => true,
                     'dropup' => true,
-                    'items' => array(
-                        array(
+                    'items' => [
+                        [
                             'label' => 'Salvar',
-                            'item_attributes' => array(
+                            'item_attributes' => [
                                 'data-ng-click' => "submitValue = 'save'",
                                 'title' => 'Salvar',
                                 'data-ng-triggersubmit' => ''
-                            )
-                        ),
-                        array(
+                            ]
+                        ],
+                        [
                             'label' => 'Salvar e Incluir',
-                            'item_attributes' => array(
+                            'item_attributes' => [
                                 'data-ng-click' => "submitValue = 'save_and_new'",
                                 'title' => 'Salvar e Incluir um Novo',
                                 'data-ng-triggersubmit' => ''
-                            )
-                        ),
-                    )
-                )
-            )
-        ));
+                            ]
+                        ],
+                    ]
+                ]
+            ]
+        ]);
 
-        $this->add(array(
+        $this->add([
             'type' => 'Button',
             'name' => 'btnCancelar',
-            'attributes' => array(
+            'attributes' => [
                 'class' => 'btn btn-default',
                 'title' => 'Cancelar',
-            ),
-            'options' => array(
+            ],
+            'options' => [
                 'label' => "",
                 'glyphicon' => 'floppy-remove'
-            ),
-        ));
+            ],
+        ]);
 
-        $this->add(array(
+        $this->add([
             'type' => 'Button',
             'name' => 'btnExcluir',
-            'attributes' => array(
+            'attributes' => [
                 'class' => 'btn btn-danger',
                 'title' => 'Excluir',
                 'data-ng-delete' => "optionsDelete",
                 'data-ng-disabled' => $this->getModelCodigo() . " == ''"
-            ),
-            'options' => array(
+            ],
+            'options' => [
                 'label' => "",
                 'glyphicon' => 'trash'
-            )
-        ));
+            ]
+        ]);
     }
 
     public function getModelCodigo() {
@@ -104,16 +104,16 @@ class ActionsFieldset extends Fieldset {
         return $this->get('submitValue');
     }
 
-    public function addSaveAction($action = array()) {
+    public function addSaveAction($action = []) {
         $options = $this->get('btnSalvar')->getOptions();
-        $options['dropdown']['items'][] = array(
+        $options['dropdown']['items'][] = [
             'label' => $action['label'],
-            'item_attributes' => array(
+            'item_attributes' => [
                 'data-ng-click' => sprintf("submitValue = '%s'", $action['value']),
                 'title' => $action['title'],
                 'data-ng-triggersubmit' => ''
-            )
-        );
+            ]
+        ];
         $this->get('btnSalvar')->setOptions($options);
     }
 

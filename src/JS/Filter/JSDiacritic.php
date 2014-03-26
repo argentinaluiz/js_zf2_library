@@ -11,13 +11,13 @@ use Zend\Filter\AbstractFilter;
 
 class JSDiacritic extends AbstractFilter {
 
-    public function __construct($options = array()) {
+    public function __construct($options = []) {
         $this->setOptions($options);
     }
 
     public function filter($value) {
-        $chars = array(
-            // Latin-1        
+        $chars = [
+            // Latin-1
             chr(195) . chr(128) => 'A', chr(195) . chr(129) => 'A',
             chr(195) . chr(130) => 'A', chr(195) . chr(131) => 'A',
             chr(195) . chr(132) => 'A', chr(195) . chr(133) => 'A',
@@ -112,7 +112,7 @@ class JSDiacritic extends AbstractFilter {
             chr(197) . chr(188) => 'z', chr(197) . chr(189) => 'Z',
             chr(197) . chr(190) => 'z', chr(197) . chr(191) => 's',
             // Euro
-            chr(226) . chr(130) . chr(172) => 'EUR');
+            chr(226) . chr(130) . chr(172) => 'EUR'];
         return strtr($value, $chars);
     }
 

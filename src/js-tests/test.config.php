@@ -6,8 +6,8 @@
  *
  * @see https://github.com/zendframework/ZFTool
  */
-return array(
-    'modules' => array(
+return [
+    'modules' => [
         'Application',
         'DoctrineModule',
         'DoctrineORMModule',
@@ -17,15 +17,15 @@ return array(
     /*
      * Other Modules
      */
-    ),
-    'module_listener_options' => array(
-        'module_paths' => array(
+    ],
+    'module_listener_options' => [
+        'module_paths' => [
             './module',
             './vendor'
-        ),
-        'config_glob_paths' => array(
+        ],
+        'config_glob_paths' => [
             'config/autoload/{,*.}{global,local}.php',
             __DIR__ . '/autoload/doctrine.test.php',
-        )
-    ),
-);
+        ]
+    ],
+];

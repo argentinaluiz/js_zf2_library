@@ -10,12 +10,12 @@ class BaseForm extends AbstractForm {
     private $modelCodigo = 'codigo';
     private $actions;
 
-    public function __construct(ObjectManager $objectManager, $name = null, $options = array()) {
+    public function __construct(ObjectManager $objectManager, $name = null, $options = []) {
         parent::__construct($objectManager, $name, $options);
     }
 
-    public function addActions($options = array()) {
-        $this->actions = new ActionsFieldset('formActions', array('model-codigo' => $this->modelCodigo), $options);
+    public function addActions($options = []) {
+        $this->actions = new ActionsFieldset('formActions', ['model-codigo' => $this->modelCodigo], $options);
         $this->add($this->actions);
     }
 

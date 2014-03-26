@@ -19,9 +19,9 @@ class Cnpj extends CgcAbstract {
      * Modificadores de Dígitos
      * @var array
      */
-    protected $modifiers = array(
-        array(5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2),
-        array(6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2)
-    );
+    protected $modifiers = [
+        [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2],
+        [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+    ];
 
 }

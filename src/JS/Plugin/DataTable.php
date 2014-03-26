@@ -25,7 +25,7 @@ class DataTable extends AbstractPlugin {
      * 
      * $retorno=array('nome' => 'ASC','sobrenome' => 'ASC')
      */
-    public function getOrderBy($colunas = array()) {
+    public function getOrderBy($colunas = []) {
 
         $params = $this->getController()->plugin('params');
         $sOrder = array();

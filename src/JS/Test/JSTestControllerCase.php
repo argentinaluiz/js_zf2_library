@@ -88,11 +88,11 @@ abstract class JSTestControllerCase extends AbstractHttpControllerTestCase {
         $config = $this->getConfig();
         $controller = $this->getServiceManager()->get('ControllerLoader')->get($controllerClass);
         $event = new MvcEvent();
-        $routerConfig = isset($config['router']) ? $config['router'] : array();
+        $routerConfig = isset($config['router']) ? $config['router'] : [];
         $router = TreeRouteStack::factory($routerConfig);
 
         $event->setRouter($router);
-        $event->setRouteMatch(new RouteMatch(array('controller' => $controllerName, 'action' => $action)));
+        $event->setRouteMatch(new RouteMatch(['controller' => $controllerName, 'action' => $action]));
         $controller->setEvent($event);
         return $controller;
     }

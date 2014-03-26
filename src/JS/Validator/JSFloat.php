@@ -20,11 +20,10 @@ class JSFloat extends AbstractValidator {
     /**
      * @var array
      */
-    protected $messageTemplates = array(
+    protected $messageTemplates = [
         self::INVALID => "Invalid type given. String, integer or float expected",
         self::NOT_FLOAT => "'%value%' does not appear to be a float",
-    );
-    
+    ];
     protected $locale;
 
     /**
@@ -32,7 +31,7 @@ class JSFloat extends AbstractValidator {
      *
      * @param string|Zend_Locale $locale
      */
-    public function __construct($options = array()) {
+    public function __construct($options = []) {
         if ($options instanceof Traversable) {
             $options = ArrayUtils::iteratorToArray($options);
         }
@@ -85,7 +84,7 @@ class JSFloat extends AbstractValidator {
 
         $this->setValue($value);
         try {
-            if (!Zend_Locale_Format::isFloat($value, array('locale' => $this->locale))) {
+            if (!Zend_Locale_Format::isFloat($value, ['locale' => $this->locale])) {
                 $this->setValue(self::NOT_FLOAT);
                 return false;
             }

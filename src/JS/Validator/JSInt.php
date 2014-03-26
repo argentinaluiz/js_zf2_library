@@ -20,11 +20,10 @@ class JSInt extends AbstractValidator {
     /**
      * @var array
      */
-    protected $messageTemplates = array(
+    protected $messageTemplates = [
         self::INVALID => "Invalid type given. String or integer expected",
         self::NOT_INT => "'%value%' does not appear to be an integer",
-    );
-    
+    ];
     protected $locale;
 
     /**
@@ -32,7 +31,7 @@ class JSInt extends AbstractValidator {
      *
      * @param string|Zend_Locale $locale
      */
-    public function __construct($options = array()) {
+    public function __construct($options = []) {
 
         if ($options instanceof Traversable) {
             $options = ArrayUtils::iteratorToArray($options);
@@ -96,7 +95,7 @@ class JSInt extends AbstractValidator {
             }
         } else {
             try {
-                if (!Zend_Locale_Format::isInteger($value, array('locale' => $this->locale))) {
+                if (!Zend_Locale_Format::isInteger($value, ['locale' => $this->locale])) {
                     $this->error(self::NOT_INT);
                     return false;
                 }

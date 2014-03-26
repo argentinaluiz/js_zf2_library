@@ -12,7 +12,6 @@
 namespace JS\Plugin;
 
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
-use Zend\Json\Encoder;
 
 class JSResponse extends AbstractPlugin {
 
@@ -21,11 +20,7 @@ class JSResponse extends AbstractPlugin {
     public function html($msg) {
         $response = $this->getEvent()->getResponse();
         $response->getHeaders()
-                ->addHeaders(
-                        array(
-                            'Content-Type' => 'text/html'
-                        )
-        );
+                ->addHeaders(['Content-Type' => 'text/html']);
         $response->setContent($msg);
         return $response;
     }
@@ -35,9 +30,7 @@ class JSResponse extends AbstractPlugin {
                 getResponse()->
                 setStatusCode(400);
         $response->getHeaders()->
-                addHeaders(array(
-                    'Content-Type' => 'text/html'
-        ));
+                addHeaders(['Content-Type' => 'text/html']);
         $response->setContent(\JS\Template\Messages\MessageFactory::message($msg, $template, \JS\Template\Messages\MessageInterface::ERROR));
         return $response;
     }
@@ -60,7 +53,7 @@ class JSResponse extends AbstractPlugin {
 
         $event = $controller->getEvent();
         if (!$event instanceof \Zend\Mvc\MvcEvent) {
-            $params = array();
+            $params = [];
             if ($event) {
                 $params = $event->getParams();
             }

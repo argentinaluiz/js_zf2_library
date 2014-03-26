@@ -25,7 +25,7 @@ class JSNumberFormat extends AbstractFilter {
      *  'precision' => 2
      * )
      */
-    public function __construct($options = array()) {
+    public function __construct($options = []) {
         $this->setOptions($options);
     }
 

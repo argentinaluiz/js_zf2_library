@@ -94,7 +94,7 @@ class Log extends AbstractPlugin {
 
         $event = $controller->getEvent();
         if (!$event instanceof \Zend\Mvc\MvcEvent) {
-            $params = array();
+            $params = [];
             if ($event) {
                 $params = $event->getParams();
             }

@@ -1,28 +1,28 @@
 <?php
 
-return array(
-    'doctrine' => array(
-        'connection' => array(
-            'orm_default' => array(
+return [
+    'doctrine' => [
+        'connection' => [
+            'orm_default' => [
                 'driverClass' => 'Doctrine\DBAL\Driver\PDOMySql\Driver',
-                'params' => array(
+                'params' => [
                     'host' => '127.0.0.1',
                     'port' => '3306',
                     'user' => 'user',
                     'password' => 'pass',
                     'dbname' => 'dbname',
-                ),
-                'doctrine_type_mappings' => array(
+                ],
+                'doctrine_type_mappings' => [
                     'enum' => 'string'
-                ),
-            )
-        ),
-        'configuration' => array(
-            'orm_default' => array(
-                'numeric_functions' => array(
+                ],
+            ]
+        ],
+        'configuration' => [
+            'orm_default' => [
+                'numeric_functions' => [
                     'DATE_FORMAT' => 'JS\Doctrine\DateFormat'
-                )
-            )
-        )
-    )
-);
+                ]
+            ]
+        ]
+    ]
+];

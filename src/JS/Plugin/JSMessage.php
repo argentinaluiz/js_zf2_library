@@ -87,7 +87,7 @@ class JSMessage extends AbstractPlugin {
         $array = MessageFactory::create($this->type)->getListPriorityMessage();
         $newArray = array();
         foreach ($array as $value)
-            $newArray[$value] = array();
+            $newArray[$value] = [];
         return $newArray;
     }
 

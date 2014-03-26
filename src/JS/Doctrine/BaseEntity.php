@@ -11,13 +11,11 @@ class BaseEntity {
     }
 
     public function hydrate(Array $data = array()) {
-        $hydrator = new ClassMethods();
-        $hydrator->hydrate($data, $this);
+        (new ClassMethods())->hydrate($data, $this);
     }
 
     public function extract() {
-        $hydrator = new ClassMethods();
-        return $hydrator->extract($this);
+        return (new ClassMethods())->extract($this);
     }
 
 }

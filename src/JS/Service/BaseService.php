@@ -80,7 +80,7 @@ class BaseService implements ServiceLocatorAwareInterface {
         }
     }
 
-    public function remove($data = array()) {
+    public function remove($data = []) {
         try {
             $this->entity = $this->getRepository()->findOneBy($data);
             if ($this->entity) {

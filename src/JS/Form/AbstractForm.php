@@ -11,7 +11,7 @@ class AbstractForm extends Form implements ObjectManagerAwareInterface {
 
     protected $objectManager;
 
-    public function __construct(ObjectManager $objectManager, $name = null, $options = array()) {
+    public function __construct(ObjectManager $objectManager, $name = null, $options = []) {
         parent::__construct($name, $options);
 
         $this->setObjectManager($objectManager);

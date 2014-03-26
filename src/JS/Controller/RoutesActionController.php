@@ -31,9 +31,9 @@ class RoutesActionController extends AbstractActionController {
         if (in_array($submitValue, array_keys($routes))) {
             $action = $routes[$submitValue];
             if (empty($action))
-                $this->flashMessenger()->addMessage(array(
+                $this->flashMessenger()->addMessage([
                     'notice' => "<strong>Rota não implementada</strong>"
-                ));
+                ]);
             else {
                 if (is_callable($routes[$submitValue]))
                     return $this->redirect()->toUrl($routes[$submitValue]($this));
@@ -53,22 +53,22 @@ class RoutesActionController extends AbstractActionController {
         $routesAction = $this->getRoutesAction();
         if ($routesAction['save'] == '')
             $this->addRoutesAction('save', function($controller) {
-                $url = $controller->url()->fromRoute($controller->getRoute(), array(
+                $url = $controller->url()->fromRoute($controller->getRoute(), [
                     'action' => 'editar',
                     $controller->getIdentifierName() => $controller->getEntity()->{'get' . ucfirst($controller->getIdentifierName())}()
-                ));
+                ]);
                 return $url;
             });
 
         if ($routesAction['save_and_close'] == '')
-            $this->addRoutesAction('save_and_close', $this->url()->fromRoute($this->getRoute(), array(
+            $this->addRoutesAction('save_and_close', $this->url()->fromRoute($this->getRoute(), [
                         'action' => 'consultar',
-            )));
+            ]));
 
         if ($routesAction['save_and_new'] == '')
-            $this->addRoutesAction('save_and_new', $this->url()->fromRoute($this->getRoute(), array(
+            $this->addRoutesAction('save_and_new', $this->url()->fromRoute($this->getRoute(), [
                         'action' => 'novo',
-            )));
+            ]));
     }
 
     public function getRoutesAction() {
