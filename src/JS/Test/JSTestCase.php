@@ -17,9 +17,6 @@ class JSTestCase extends \PHPUnit_Framework_TestCase {
         $password = $params['password'];
         $dbname = $params['dbname'];
         $dbh = new \PDO("mysql:host=$host", $user, $password);
-        if (!$dbh->exec("CREATE DATABASE IF NOT EXISTS `$dbname` CHARACTER SET utf8 COLLATE utf8_general_ci;")) {
-            throw new \Exception(print_r($dbh->errorInfo(), true));
-        }
         $dbh = null;
     }
 
@@ -31,9 +28,7 @@ class JSTestCase extends \PHPUnit_Framework_TestCase {
         $password = $params['password'];
         $dbname = $params['dbname'];
         $dbh = new \PDO("mysql:host=$host", $user, $password);
-        if (!$dbh->exec("DROP DATABASE IF EXISTS `$dbname`;")) {
-            throw new \Exception(print_r($dbh->errorInfo(), true));
-        }
+        $dbh->exec("DROP DATABASE IF EXISTS `$dbname`;");
         $dbh = null;
     }
 

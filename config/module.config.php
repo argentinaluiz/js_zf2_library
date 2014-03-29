@@ -18,6 +18,9 @@ return [
         ],
     ],
     'service_manager' => [
+        'abstract_factories' => [
+            'JS\Service\BaseAbstractServiceFactory',
+        ],
         'factories' => [
             'jstranslator' => 'JS\Translator\TranslatorServiceFactory',
             'JS\Service\BaseService' => 'JS\Service\BaseServiceFactory'

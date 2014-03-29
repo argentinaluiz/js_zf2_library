@@ -2,11 +2,10 @@
 
 namespace JS\Service;
 
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Doctrine\ORM\EntityManager;
 use JS\Exception\BaseException;
 
-class BaseService implements ServiceLocatorAwareInterface {
+class BaseService {
 
     protected $entity;
     protected $entityName;
@@ -16,11 +15,6 @@ class BaseService implements ServiceLocatorAwareInterface {
      * @var \Doctrine\ORM\EntityManager
      */
     protected $entityManager;
-
-    /**
-     * @var \Zend\ServiceManager\ServiceLocatorInterface
-     */
-    protected $serviceLocator;
     protected $translator;
 
     /**
@@ -29,10 +23,10 @@ class BaseService implements ServiceLocatorAwareInterface {
      * @param \Doctrine\ORM\EntityManager $entityManager
      * @return void
      */
-    public function __construct($entityManager, $translator = null, $entityName = null) {
-        $this->setEntityManager($entityManager);
-        $this->setEntityName($entityName);
-        $this->setTranslator($translator);
+    public function __construct(EntityManager $entityManager, $translator = null, $entityName = null) {
+        $this->setEntityManager($entityManager)
+                ->setEntityName($entityName)
+                ->setTranslator($translator);
     }
 
     /**
@@ -60,94 +54,57 @@ class BaseService implements ServiceLocatorAwareInterface {
         return $this->getEntityManager()->getRepository($this->entityName);
     }
 
-    public function create($entity) {
+    /**
+     * Persiste a entidade em questao e guarda
+     * na variavel $entity
+     */
+    private function save($entity) {
         try {
-            $this->getEntityManager()->persist($entity);
+            $this->entity = $entity;
+            $this->getEntityManager()->persist($this->entity);
             $this->getEntityManager()->flush();
-            return $entity;
+            return $this->entity;
         } catch (\Exception $ex) {
-            $this->chooseHandleTransactionException($ex);
+            $this->chooseHandleException($ex);
         }
+    }
+
+    public function create($entity) {
+        return $this->save($entity);
     }
 
     public function update($entity) {
-        try {
-            $this->getEntityManager()->merge($entity);
-            $this->getEntityManager()->flush();
-            return $entity;
-        } catch (\Exception $ex) {
-            $this->chooseHandleTransactionException($ex);
-        }
+        return $this->save($entity);
     }
 
-    public function remove($data = []) {
+    public function remove($codigo) {
         try {
-            $this->entity = $this->getRepository()->findOneBy($data);
+            $this->entity = $this->find($codigo);
             if ($this->entity) {
                 $this->getEntityManager()->remove($this->entity);
                 $this->getEntityManager()->flush();
                 return $this->entity;
-            } else
-                throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
+            }
+            throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
         } catch (\Exception $ex) {
-            $this->chooseHandleTransactionException($ex);
-        }
-    }
-
-    protected function begin() {
-        if ($this->hasTransaction()) {
-            $this->entityManager->getConnection()->rollback();
-            throw new \Exception("There is no nested transaction support!");
-        }
-        try {
-            if (!$this->entityManager->getConnection()->isConnected())
-                $this->entityManager->getConnection()->connect();
-            $this->entityManager->getConnection()->beginTransaction();
-        } catch (\Exception $e) {
-            throw new \Exception("Não foi possível conectar com o banco de dados: " . $e->getMessage());
-        }
-    }
-
-    protected function commit() {
-        if ($this->hasTransaction()) {
-            $this->entityManager->commit();
+            $this->chooseHandleException($ex);
         }
     }
 
     /**
-     * @return boolean
+     * Se a exception for PDOException verifica se o erro e 1451 para
+     * lanca uma excecao que nao e possivel excluir o registro
+     * senao lanca o exception em questao
      */
-    protected function hasTransaction() {
-        return $this->entityManager->getConnection()->isTransactionActive();
-    }
-
-    protected function rollback() {
-        if ($this->hasTransaction()) {
-            $this->entityManager->getConnection()->rollback();
+    public function chooseHandleException(\Exception $exception) {
+        if ($exception->getPrevious() instanceof \PDOException) {
+            $this->handlePDOException($exception);
+        } else {
+            throw $exception;
         }
     }
 
-    protected function close() {
-        if ($this->entityManager->getConnection()->isConnected())
-            $this->entityManager->getConnection()->close();
-    }
-
-    public function chooseHandleTransactionException(\Exception $exception) {
-        if ($exception->getPrevious() instanceof \PDOException)
-            $this->handleTransactionPDOException($exception);
-        else
-            $this->handleTransactionException($exception);
-    }
-
-    public function handleTransactionException(\Exception $exception) {
-        $this->rollback();
-        $this->close();
-        throw $exception;
-    }
-
-    public function handleTransactionPDOException(\Exception $exception) {
-        $this->rollback();
-        $this->close();
+    public function handlePDOException(\Exception $exception) {
         switch ($exception->getPrevious()->errorInfo[1]) {
             case 1451:
                 throw new BaseException($this->getTranslator()->translate('e_pdo_1451'), BaseException::PDO_ERROR_DELETE_REGISTRO, $exception);
@@ -170,6 +127,7 @@ class BaseService implements ServiceLocatorAwareInterface {
      */
     public function setEntityManager($entityManager) {
         $this->entityManager = $entityManager;
+        return $this;
     }
 
     /**
@@ -186,6 +144,7 @@ class BaseService implements ServiceLocatorAwareInterface {
      */
     public function setEntityName($entityName) {
         $this->entityName = $entityName;
+        return $this;
     }
 
     /**
@@ -193,8 +152,6 @@ class BaseService implements ServiceLocatorAwareInterface {
      * @return \Zend\I18n\Translator\Translator
      */
     public function getTranslator() {
-        if (!$this->translator)
-            $this->translator = $this->getServiceLocator()->get('jstranslator');
         return $this->translator;
     }
 
@@ -204,14 +161,7 @@ class BaseService implements ServiceLocatorAwareInterface {
      */
     public function setTranslator($translator) {
         $this->translator = $translator;
-    }
-
-    public function getServiceLocator() {
-        return $this->serviceLocator;
-    }
-
-    public function setServiceLocator(ServiceLocatorInterface $serviceLocator) {
-        $this->serviceLocator = $serviceLocator;
+        return $this;
     }
 
 }

@@ -214,7 +214,7 @@ abstract class BaseController extends RoutesActionController {
                 if (!is_array($codigos))
                     $codigos = [$codigos];
                 foreach ($codigos as $codigo) {
-                    $this->getService()->remove([ $this->getIdentifierName() => $codigo]);
+                    $this->getService()->remove($codigo);
                 }
             } catch (\Exception $ex) {
                 $this->jsResponse()->error("<strong>" . $this->getTranslator()->translate('e_not_deleted') . "</strong> -> " . $ex->getMessage());
