@@ -46,7 +46,7 @@ class BaseEntityRepository extends EntityRepository {
     }
 
     /**
-     * @return \JS\Util\OrderBy
+     * @return \JS\Doctrine\ORM\Query\Expr\OrderBy
      */
     public function getOrderBy() {
         if (!$this->order)

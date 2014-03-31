@@ -4,6 +4,9 @@ namespace JS\Doctrine;
 
 use Zend\Stdlib\Hydrator\ClassMethods;
 
+/**
+ * @deprecated remove in version 3.0
+ */
 class BaseEntity {
 
     public function __construct(Array $data = array()) {

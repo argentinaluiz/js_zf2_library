@@ -20,17 +20,11 @@ class Module {
     }
 
     public function getAutoloaderConfig() {
-        return array(
-            'Zend\Loader\StandardAutoloader' => [
-                'autoregister_zf' => true,
-                'prefixes' => [
-                    'Zend_' => __DIR__ . "/../../vendor/zendframework/zendframework1/library/Zend"
-                ],
-            ],
+        return [
             'Zend\Loader\ClassMapAutoloader' => [
                 __DIR__ . '/autoload_classmap.php',
             ],
-        );
+        ];
     }
 
     public function registerJSErrorManager(MvcEvent $e) {
