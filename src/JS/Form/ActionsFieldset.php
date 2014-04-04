@@ -79,22 +79,22 @@ class ActionsFieldset extends Fieldset {
                 'class' => 'btn btn-danger',
                 'title' => 'Excluir',
                 'data-ng-delete' => "optionsDelete",
-                'data-ng-disabled' => $this->getModelCodigo() . " == ''"
             ],
             'options' => [
                 'label' => "",
                 'glyphicon' => 'trash'
             ]
         ]);
+
+        $this->bindModelIdentifier();
     }
 
-    public function getModelCodigo() {
-        return $this->modelCodigo;
-    }
-
-    public function setModelCodigo($modelCodigo) {
-        $this->modelCodigo = $modelCodigo;
-        return $this;
+    public function bindModelIdentifier() {
+        if (isset($this->options['element-codigo'])) {
+            $this->get('btnExcluir')->setAttribute('data-ng-disabled', $this->getModelCodigo() . " == ''");
+            $this->options['element-codigo']->setAttribute('data-ng-initial', '');
+            $this->options['element-codigo']->setAttribute('data-ng-model', $this->getModelCodigo());
+        }
     }
 
     /**
@@ -115,6 +115,15 @@ class ActionsFieldset extends Fieldset {
             ]
         ];
         $this->get('btnSalvar')->setOptions($options);
+    }
+
+    public function getModelCodigo() {
+        return $this->modelCodigo;
+    }
+
+    public function setModelCodigo($modelCodigo) {
+        $this->modelCodigo = $modelCodigo;
+        return $this;
     }
 
 }
