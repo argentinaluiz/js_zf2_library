@@ -36,7 +36,7 @@ class BaseService implements BaseServiceInterface {
      * @param mixed @id id of an object
      * @return Doctrine\ORM\Mapping\Entity
      */
-    protected function find($id) {
+    public function find($id) {
         return $this->getRepository()->find($id);
     }
 
@@ -45,7 +45,7 @@ class BaseService implements BaseServiceInterface {
      * @param mixed @id id of an object
      * @return Doctrine\ORM\Mapping\Entity
      */
-    protected function getReference($id) {
+    public function getReference($id) {
         return $this->getEntityManager()->getReference($this->getEntityName(), $id);
     }
 
