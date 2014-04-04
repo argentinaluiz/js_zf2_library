@@ -4,6 +4,7 @@ namespace JS\Controller;
 
 use Zend\View\Model\ViewModel;
 use JS\Exception\BaseException;
+use JS\Service\BaseServiceInterface;
 
 /**
  * Classe generica para os controllers do Zend Framework 2
@@ -23,12 +24,10 @@ use JS\Exception\BaseException;
 abstract class BaseController extends RoutesActionController {
 
     private $entity = null;
-    private $entityName;
     private $formConsultar;
     private $formCreate;
     private $formUpdate;
     private $pageSize = 20;
-    private $repository;
     private $service;
     private $translator;
 
@@ -37,7 +36,7 @@ abstract class BaseController extends RoutesActionController {
     /**
      * @param \Zend\Form\Form $form
      */
-    public function updateOrCreate($form, $entityName) {
+    public function updateOrCreate($form) {
         $checkEntityNotExist = false;
         $formName = $form->getName();
         $data = $this->params()->fromPost();
@@ -45,16 +44,15 @@ abstract class BaseController extends RoutesActionController {
             $data = $data[$formName];
         $codigo = $this->getIdentifierData($form, $data);
         if ($codigo) {
-            $entity = $this->getRepository()->find($codigo);
+            $entity = $this->getService()->find($codigo);
             if (!$entity) {
-                $entity = new $entityName;
                 $checkEntityNotExist = true;
+            } else {
+                $form->bind($entity);
             }
         } else {
-            $entity = new $entityName;
             $checkEntityNotExist = true;
         }
-        $form->bind($entity);
         $form->setData($data);
 
         if ($form->isValid()) {
@@ -81,7 +79,7 @@ abstract class BaseController extends RoutesActionController {
             $data = $data[$formName];
         $codigo = $this->getIdentifierData($form, $data);
         if ($codigo) {
-            $entity = $this->getRepository()->find($codigo);
+            $entity = $this->getService()->find($codigo);
             if (!$entity)
                 throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
         } else
@@ -97,13 +95,11 @@ abstract class BaseController extends RoutesActionController {
         return false;
     }
 
-    public function create($form, $entityName) {
+    public function create($form) {
         $formName = $form->getName();
         $data = $this->params()->fromPost();
         if (!empty($formName) && $form->wrapElements())
             $data = $data[$formName];
-        $entity = new $entityName;
-        $form->bind($entity);
         $form->setData($data);
         if ($form->isValid()) {
             $entity = $this->getService()->create($entity);
@@ -120,7 +116,7 @@ abstract class BaseController extends RoutesActionController {
     public function novoAction() {
         if ($this->getRequest()->isPost()) {
             try {
-                if ($this->create($this->getFormCreate(), $this->getEntityName()))
+                if ($this->create($this->getFormCreate()))
                     $this->flashMessenger()->addMessage([
                         'info' => "<strong>" . $this->getTranslator()->translate('s_created') . "</strong>"
                     ]);
@@ -135,8 +131,7 @@ abstract class BaseController extends RoutesActionController {
                 if ($result)
                     return $result;
                 else {
-                    $entityName = $this->getEntityName();
-                    $this->getFormCreate()->bind(new $entityName);
+                    $this->getFormCreate()->bind(new get_class($this->getFormCreate()->getObject()));
                 }
             }
         }
@@ -148,7 +143,7 @@ abstract class BaseController extends RoutesActionController {
     public function loadEntityToForm($form) {
         $codigo = $this->getEvent()->getRouteMatch()->getParam($this->getIdentifierName());
         if ($codigo != null) {
-            $registro = $this->getRepository()->find($codigo);
+            $registro = $this->getService()->find($codigo);
             if ($registro == null)
                 throw new BaseException($this->getTranslator()->translate('e_entity_not_found', BaseException::ERROR_ENTITY_NOT_EXIST));
             $form->bind($registro);
@@ -159,7 +154,7 @@ abstract class BaseController extends RoutesActionController {
     public function editarAction() {
         if ($this->getRequest()->isPost()) {
             try {
-                $result = $this->updateOrCreate($this->getFormUpdate(), $this->getEntityName());
+                $result = $this->updateOrCreate($this->getFormUpdate());
                 if ($result)
                     if ($result == 1)
                         $this->flashMessenger()->addMessage([
@@ -255,21 +250,12 @@ abstract class BaseController extends RoutesActionController {
         }
     }
 
-    public function getEntity() {
+    protected function getEntity() {
         return $this->entity;
     }
 
-    public function setEntity($entity) {
+    protected function setEntity($entity) {
         $this->entity = $entity;
-        return $this;
-    }
-
-    public function getEntityName() {
-        return $this->entityName;
-    }
-
-    public function setEntityName($entityName) {
-        $this->entityName = $entityName;
         return $this;
     }
 
@@ -309,20 +295,24 @@ abstract class BaseController extends RoutesActionController {
         return $this;
     }
 
+    /**
+     * @return \Doctrine\ORM\EntityRepository
+     */
     public function getRepository() {
-        return $this->repository;
+        return $this->getService()->getRepository();
     }
 
-    public function setRepository($repository) {
-        $this->repository = $repository;
-        return $this;
-    }
-
+    /**
+     * @return \JS\Service\BaseServiceInterface
+     */
     public function getService() {
         return $this->service;
     }
 
-    public function setService($service) {
+    /**
+     * @param \JS\Service\BaseServiceInterface $service
+     */
+    public function setService(BaseServiceInterface $service) {
         $this->service = $service;
         return $this;
     }

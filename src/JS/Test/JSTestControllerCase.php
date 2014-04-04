@@ -31,9 +31,7 @@ abstract class JSTestControllerCase extends AbstractHttpControllerTestCase {
         $password = $params['password'];
         $dbname = $params['dbname'];
         $dbh = new \PDO("mysql:host=$host", $user, $password);
-        if (!$dbh->exec("DROP DATABASE IF EXISTS `$dbname`;")) {
-            throw new \Exception(print_r($dbh->errorInfo(), true));
-        }
+        $dbh->exec("DROP DATABASE IF EXISTS `$dbname`;");
         $dbh = null;
     }
 

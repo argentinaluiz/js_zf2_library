@@ -4,7 +4,7 @@ namespace JS\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController as ZendAbstractActionController;
 
-class AbstractActionController extends ZendAbstractActionController {
+abstract class AbstractActionController extends ZendAbstractActionController {
 
     /**
      * Funcao chamada quanto uma acao nao e encontrada.
@@ -21,22 +21,31 @@ class AbstractActionController extends ZendAbstractActionController {
         }
     }
 
-    public function basePath() {
+    /**
+     * @return string
+     */
+    protected function basePath() {
         return $this->getViewHelper()->basePath();
     }
 
     /**
      * @return \Zend\View\Renderer\PhpRenderer
      */
-    public function getViewHelper() {
+    protected function getViewHelper() {
         return $this->getServiceLocator()->get('Zend\View\Renderer\RendererInterface');
     }
 
-    public function getFormManager() {
+    /**
+     * @return \Zend\Form\FormElementManager
+     */
+    protected function getFormElementManager() {
         return $this->getServiceLocator()->get('FormElementManager');
     }
 
-    public function getEntityManager() {
+    /**
+     * @return \Doctrine\ORM\EntityManager
+     */
+    protected function getEntityManager() {
         return $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
     }
 

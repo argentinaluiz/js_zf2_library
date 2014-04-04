@@ -2,33 +2,44 @@
 
 namespace JS\Doctrine\ORM\Query\Expr;
 
-class OrderBy extends \Doctrine\ORM\Query\Expr\OrderBy {
+use Doctrine\ORM\Query\Expr\OrderBy as DoctrineOrderBy;
 
-    public function __construct($sort = null, $order = null) {
-        parent::__construct($sort, $order);
-    }
+class OrderBy extends DoctrineOrderBy {
 
-    public function addMap(array $map, array $order) {
+    private static $point = '.';
+    private static $asc = 'ASC';
+    private static $desc = 'DESC';
+
+    /**
+     * @return \Doctrine\ORM\Query\Expr\OrderBy
+     */
+    public function generateOrderBy(array $map, array $order) {
         foreach ($order as $field => $orientation) {
             if (isset($map[$field])) {
-                $f = $map[$field];
-                if (isset($f["alias"]))
-                    $this->add($f["alias"] . '.' . $field, $orientation);
-                else
+                $alias = $map[$field];
+                $this->add($alias . self::$point . $field, $orientation);
+            } else {
+                if (in_array($field, $map)) {
                     $this->add($field, $orientation);
+                }
             }
         }
         return $this;
     }
 
-    public function add($sort, $order = null) {
-        if ($order != null) {
-            if (is_int($order))
-                $order = ($order == 0) ? 'ASC' : 'DESC';
-            else
-                $order = (strtoupper($order) == 'ASC') ? 'ASC' : 'DESC';
+    /**
+     * @param string $sort
+     * @param mixed $order Description
+     * @return \Doctrine\ORM\Query\Expr\OrderBy
+     */
+    public function add($sort, $order = 0) {
+        if (is_int($order)) {
+            $order = ($order == 0) ? self::$asc : self::$desc;
+        } else {
+            $order = (strtoupper($order) == self::$asc) ? self::$asc : self::$desc;
         }
         parent::add($sort, $order);
+        return $this;
     }
 
 }

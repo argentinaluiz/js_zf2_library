@@ -2,7 +2,7 @@
 
 namespace JS\Controller;
 
-class RoutesActionController extends AbstractActionController {
+abstract class RoutesActionController extends AbstractActionController {
 
     private $routesAction = array(
         'save' => '',
@@ -24,7 +24,7 @@ class RoutesActionController extends AbstractActionController {
             return false;
     }
 
-    public function triggerRoutesAction($submitValue) {
+    protected function triggerRoutesAction($submitValue) {
         $this->initRoutesAction();
         $routes = $this->getRoutesAction();
         //Sem acoes de rotas incluidas ou nao presente no array de rotas default
@@ -49,15 +49,22 @@ class RoutesActionController extends AbstractActionController {
      * save, save_and_new, save_and_close, delete
      * )
      */
-    public function initRoutesAction() {
+    protected function initRoutesAction() {
         $routesAction = $this->getRoutesAction();
         if ($routesAction['save'] == '')
             $this->addRoutesAction('save', function($controller) {
-                $url = $controller->url()->fromRoute($controller->getRoute(), [
-                    'action' => 'editar',
-                    $controller->getIdentifierName() => $controller->getEntity()->{'get' . ucfirst($controller->getIdentifierName())}()
-                ]);
-                return $url;
+                $entity = $controller->getEntity();
+                if (is_callable([$entity, 'get' . ucfirst($controller->getIdentifierName())], true)) {
+                    $getIdentifier = $entity->{'get' . ucfirst($controller->getIdentifierName())};
+                    $url = $controller->url()->fromRoute($controller->getRoute(), [
+                        'action' => 'editar',
+                        $controller->getIdentifierName() => $getIdentifier()
+                    ]);
+                    return $url;
+                }
+                throw new \BadMethodCallException("Não foi possível pegar o identificador. "
+                . "Se a entidade não tem um método para pegar o identificador, "
+                . "pode ser implementado uma interface de EntityIdentifierInterface");
             });
 
         if ($routesAction['save_and_close'] == '')

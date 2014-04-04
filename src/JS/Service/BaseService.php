@@ -4,8 +4,10 @@ namespace JS\Service;
 
 use Doctrine\ORM\EntityManager;
 use JS\Exception\BaseException;
+use JS\Service\BaseServiceInterface;
+use Zend\I18n\Translator\TranslatorInterface;
 
-class BaseService {
+class BaseService implements BaseServiceInterface {
 
     protected $entity;
     protected $entityName;
@@ -31,7 +33,7 @@ class BaseService {
 
     /**
      * Find object by id in repository
-     * @param int @id id of an object
+     * @param mixed @id id of an object
      * @return Doctrine\ORM\Mapping\Entity
      */
     protected function find($id) {
@@ -40,7 +42,7 @@ class BaseService {
 
     /**
      * Find object reference by id in repository
-     * @param int @id id of an object
+     * @param mixed @id id of an object
      * @return Doctrine\ORM\Mapping\Entity
      */
     protected function getReference($id) {
@@ -149,7 +151,7 @@ class BaseService {
 
     /**
      * Get translator
-     * @return \Zend\I18n\Translator\Translator
+     * @return \Zend\I18n\Translator\TranslatorInterface
      */
     public function getTranslator() {
         return $this->translator;
@@ -157,9 +159,9 @@ class BaseService {
 
     /**
      * Set translator
-     * @param \Zend\I18n\Translator\Translator $translator
+     * @param \Zend\I18n\Translator\TranslatorInterface $translator
      */
-    public function setTranslator($translator) {
+    public function setTranslator(TranslatorInterface $translator) {
         $this->translator = $translator;
         return $this;
     }

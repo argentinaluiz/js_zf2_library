@@ -9,40 +9,34 @@ class BaseEntityRepository extends EntityRepository {
 
     const ALIAS_ENTITY = 'em';
 
-    private $select;
     private $order;
-    public $orderByDefault;
-    public $orderByMap;
-    public $camposSelectList;
+    private static $point = '.';
+    private static $separator = ',';
+    protected $orderByDefault;
+    protected $orderByMap;
+    protected $camposSelectList;
 
     public function __construct($entityManager, $class) {
         parent::__construct($entityManager, $class);
     }
 
     public function getSelectList() {
-        $select = "";
+        $select = '';
         foreach ($this->camposSelectList as $key => $value) {
-            if (is_array($value) && array_key_exists('alias', $value))
-                $select .= $value["alias"] . "." . $key . ",";
-            else
-                $select .= $value . ",";
+            if (!is_int($key)) {
+                $select .= $key . self::$point . $value . self::$separator;
+            } else {
+                $select .= $value . self::$separator;
+            }
         }
-        $this->setSelect(substr_replace($select, "", -1));
-        return $this->getSelect();
+        $select = substr_replace($select, '', -1);
+        return $select;
     }
 
     public function getSelectCount() {
         $primaryKey = $this->getClassMetadata()->getSingleIdentifierFieldName();
-        $this->setSelect("count(" . self::ALIAS_ENTITY . "." . $primaryKey . ")");
-        return $this->getSelect();
-    }
-
-    public function getSelect() {
-        return $this->select;
-    }
-
-    public function setSelect($select) {
-        $this->select = $select;
+        $select = 'count(' . self::ALIAS_ENTITY . self::$point . $primaryKey . ')';
+        return $select;
     }
 
     /**
