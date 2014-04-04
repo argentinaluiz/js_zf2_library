@@ -127,7 +127,7 @@ class BaseService implements BaseServiceInterface {
      * Set entity manager
      * @param \Doctrine\ORM\EntityManager $entityManager entity manager to set
      */
-    public function setEntityManager($entityManager) {
+    public function setEntityManager(EntityManager $entityManager) {
         $this->entityManager = $entityManager;
         return $this;
     }

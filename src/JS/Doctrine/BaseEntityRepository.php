@@ -13,7 +13,7 @@ class BaseEntityRepository extends EntityRepository {
     private static $point = '.';
     private static $separator = ',';
     protected $orderByDefault;
-    protected $orderByMap;
+    public $orderByMap;
     protected $camposSelectList;
 
     public function __construct($entityManager, $class) {
@@ -22,11 +22,11 @@ class BaseEntityRepository extends EntityRepository {
 
     public function getSelectList() {
         $select = '';
-        foreach ($this->camposSelectList as $key => $value) {
-            if (!is_int($key)) {
-                $select .= $key . self::$point . $value . self::$separator;
+        foreach ($this->camposSelectList as $name => $aliasOrName) {
+            if (!is_int($name)) {
+                $select .= $aliasOrName . self::$point . $name . self::$separator;
             } else {
-                $select .= $value . self::$separator;
+                $select .= $aliasOrName . self::$separator;
             }
         }
         $select = substr_replace($select, '', -1);
