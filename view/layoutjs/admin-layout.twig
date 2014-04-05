@@ -11,11 +11,8 @@
             .prependStylesheet(basePath() ~ '/public/css/libs/bootstrap.min.css')|raw
         }}
 
-        <script type="text/javascript">
-            var basePath = "{{ basePath() ~ '/public/js' }}";
-        </script>
         {% do headScript().setAllowArbitraryAttributes(true) %}
-        {{ headScript().prependFile(basePath() ~ '/public/js/app/bower_components/html5shiv/dist/html5shiv.js',
+        {{ headScript().prependFile(basePath() ~ '/public/bower_components/html5shiv/dist/html5shiv.js',
                                     'text/javascript',{conditional : 'lt IE 9' })|raw }}
     </head>
     <body>
