@@ -145,10 +145,10 @@ abstract class BaseController extends RoutesActionController {
         if ($codigo != null) {
             $registro = $this->getService()->find($codigo);
             if ($registro == null)
-                throw new BaseException($this->getTranslator()->translate('e_entity_not_found', BaseException::ERROR_ENTITY_NOT_EXIST));
+                throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
             $form->bind($registro);
         } else
-            throw new BaseException($this->getTranslator()->translate('e_entity_not_found', BaseException::ERROR_ENTITY_NOT_EXIST));
+            throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
     }
 
     public function editarAction() {
