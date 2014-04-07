@@ -2,13 +2,13 @@
 <html lang="pt-br">
     <head>
         <meta charset="utf-8">
-        {{ headTitle(translate('JS Clin Plus')).setSeparator(' - ').setAutoEscape(false)|raw }}
+        {{ headTitle(translate('Sistema')).setSeparator(' - ').setAutoEscape(false)|raw }}
         {{ headMeta().appendName('viewport', 'width=device-width, initial-scale=1.0')|raw }}
 
         <!-- Le styles -->
         {{ headLink({rel : 'shortcut icon', type : 'image/vnd.microsoft.icon', href : basePath() ~ '/public/img/favicon.ico'})
-            .prependStylesheet(basePath() ~ '/public/css/libs/style.css')
-            .prependStylesheet(basePath() ~ '/public/css/libs/bootstrap.min.css')|raw
+            .prependStylesheet(basePath() ~ '/public/css/app/style.css')
+            .prependStylesheet(basePath() ~ '/bower_components/bootstrap/dist/css/bootstrap.min.css')|raw
         }}
 
         {% do headScript().setAllowArbitraryAttributes(true) %}
