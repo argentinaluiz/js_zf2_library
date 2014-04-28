@@ -11,7 +11,6 @@ return [
         'invokables' => [
             'jsMessage' => '\JS\Plugin\JSMessage',
             'jsResponse' => '\JS\Plugin\JSResponse',
-            'jsDataTable' => '\JS\Plugin\DataTable'
         ],
         'factories' => [
             'jsLog' => 'JS\Plugin\LogFactory',

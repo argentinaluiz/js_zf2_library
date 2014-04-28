@@ -5,6 +5,7 @@ namespace JS\Controller;
 use Zend\View\Model\ViewModel;
 use JS\Exception\BaseException;
 use JS\Service\BaseServiceInterface;
+use JSDataTables\Service\JSDataTables;
 
 /**
  * Classe generica para os controllers do Zend Framework 2
@@ -27,11 +28,9 @@ abstract class BaseController extends RoutesActionController {
     private $formConsultar;
     private $formCreate;
     private $formUpdate;
-    private $pageSize = 20;
     private $service;
+    private $dataTables;
     private $translator;
-
-    abstract public function find($opcoes);
 
     /**
      * @param \Zend\Form\Form $form
@@ -194,13 +193,6 @@ abstract class BaseController extends RoutesActionController {
         return new ViewModel([ 'messages' => $messages, 'form' => $this->getFormUpdate()]);
     }
 
-    public function consultarAction() {
-        $messages = $this->jsMessage()->messagesComplex($this->flashMessenger()->getCurrentMessages());
-        $this->flashMessenger()->clearCurrentMessages();
-        $form = $this->getFormConsultar();
-        return new ViewModel([ 'form' => $form, 'messages' => $messages]);
-    }
-
     public function excluirAction() {
         if ($this->getRequest()->isPost()) {
             try {
@@ -220,28 +212,17 @@ abstract class BaseController extends RoutesActionController {
         }
     }
 
+    public function consultarAction() {
+        $messages = $this->jsMessage()->messagesComplex($this->flashMessenger()->getCurrentMessages());
+        $this->flashMessenger()->clearCurrentMessages();
+        $form = $this->getFormConsultar();
+        return new ViewModel([ 'form' => $form, 'messages' => $messages]);
+    }
+
     public function buscarregistrosAction() {
         if ($this->getRequest()->isGet()) {
-            $opcaoConsulta = $this->params()->fromQuery('opcoesConsulta', "");
-            $firstResult = abs($this->params()->fromQuery('iDisplayStart', 0));
-            $pageSize = abs($this->params()->fromQuery("iDisplayLength", $this->getPageSize()));
-            $columnFlag = '';
-            $repository = $this->getRepository();
-            $orderBy = array_keys($repository->orderByMap);
-            array_unshift($orderBy, $columnFlag);
             try {
-                $result = $this->find([
-                    'opcoesConsulta' => $opcaoConsulta,
-                    'firstResult' => $firstResult,
-                    'pageSize' => $pageSize,
-                    'orderBy' => $this->jsDataTable()->getOrderBy($orderBy)
-                ]);
-
-                return new \Zend\View\Model\JsonModel([
-                    "iTotalDisplayRecords" => $result['totalResult'],
-                    'iTotalRecords' => $result['totalResult'],
-                    'rows' => $result['result']
-                ]);
+                return new \Zend\View\Model\JsonModel($this->getDataTables()->getPaginator());
             } catch (\Exception $ex) {
                 $this->jsResponse()->error("<strong>" . $this->getTranslator()->translate('e_not_find_entities') . "</strong> -> " . $ex->getMessage());
                 $this->jsLog()->log($ex);
@@ -256,15 +237,6 @@ abstract class BaseController extends RoutesActionController {
 
     protected function setEntity($entity) {
         $this->entity = $entity;
-        return $this;
-    }
-
-    public function getPageSize() {
-        return $this->pageSize;
-    }
-
-    public function setPageSize($pageSize) {
-        $this->pageSize = $pageSize;
         return $this;
     }
 
@@ -314,6 +286,21 @@ abstract class BaseController extends RoutesActionController {
      */
     public function setService(BaseServiceInterface $service) {
         $this->service = $service;
+        return $this;
+    }
+
+    /**
+     * @return \JSDataTables\Service\JSDataTables
+     */
+    public function getDataTables() {
+        return $this->dataTables;
+    }
+
+    /**
+     * @param \JSDataTables\Service\JSDataTables $dataTable
+     */
+    public function setDataTables(JSDataTables $dataTable) {
+        $this->dataTables = $dataTable;
         return $this;
     }
 
