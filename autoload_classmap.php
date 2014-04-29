@@ -24,6 +24,7 @@ return array(
     'JS\Form\AbstractForm' => __DIR__ . '/src/JS/Form/AbstractForm.php',
     'JS\Form\ActionsFieldset' => __DIR__ . '/src/JS/Form/ActionsFieldset.php',
     'JS\Form\BaseForm' => __DIR__ . '/src/JS/Form/BaseForm.php',
+    'JS\Form\ListFieldset' => __DIR__ . '/src/JS/Form/ListFieldset.php',
     'JS\Form\MultiPageForm' => __DIR__ . '/src/JS/Form/MultiPageForm.php',
     'JS\Form\MultiPageFormInterface' => __DIR__ . '/src/JS/Form/MultiPageFormInterface.php',
     'JS\Plugin\DataTable' => __DIR__ . '/src/JS/Plugin/DataTable.php',

@@ -4,11 +4,12 @@ namespace JS\Form;
 
 use Zend\Form\Fieldset;
 
-class AbstractListFieldset extends AbstractFieldset {
+class ListFieldset extends Fieldset {
 
     private $buttonBarTop;
 
-    public function init() {
+    public function __construct($name = null, $options = array()) {
+        parent::__construct($name, $options);
         $this->buttonBarTop = new Fieldset('buttonBarTop');
         $this->add($this->buttonBarTop);
         $this->buttonBarTop->add([
