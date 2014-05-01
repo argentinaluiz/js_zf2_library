@@ -55,10 +55,10 @@ abstract class RoutesActionController extends AbstractActionController {
             $this->addRoutesAction('save', function($controller) {
                 $entity = $controller->getEntity();
                 if (is_callable([$entity, 'get' . ucfirst($controller->getIdentifierName())], true)) {
-                    $getIdentifier = $entity->{'get' . ucfirst($controller->getIdentifierName())};
+                    $getIdentifier = 'get' . ucfirst($controller->getIdentifierName());
                     $url = $controller->url()->fromRoute($controller->getRoute(), [
                         'action' => 'editar',
-                        $controller->getIdentifierName() => $getIdentifier()
+                        $controller->getIdentifierName() => $entity->{$getIdentifier}()
                     ]);
                     return $url;
                 }
