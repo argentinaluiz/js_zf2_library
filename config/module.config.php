@@ -42,6 +42,7 @@ return [
             'JS\Validator\JSFloat' => 'JS\Validator\JSFloat',
             'JS\Validator\Cpf' => 'JS\Validator\Cpf',
             'JS\Validator\Cnpj' => 'JS\Validator\Cnpj',
+            'JSNotEmpty' => 'JS\Validator\NotEmpty'
         ]
     ],
     'view_helpers' => [
