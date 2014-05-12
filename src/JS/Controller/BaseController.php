@@ -39,8 +39,9 @@ abstract class BaseController extends RoutesActionController {
         $checkEntityNotExist = false;
         $formName = $form->getName();
         $data = $this->params()->fromPost();
-        if (!empty($formName) && $form->wrapElements())
+        if (!empty($formName) && $form->wrapElements()) {
             $data = $data[$formName];
+        }
         $codigo = $this->getIdentifierData($form, $data);
         if ($codigo) {
             $entity = $this->getService()->find($codigo);
@@ -74,15 +75,18 @@ abstract class BaseController extends RoutesActionController {
     public function update($form) {
         $formName = $form->getName();
         $data = $this->params()->fromPost();
-        if (!empty($formName) && $form->wrapElements())
+        if (!empty($formName) && $form->wrapElements()) {
             $data = $data[$formName];
+        }
         $codigo = $this->getIdentifierData($form, $data);
         if ($codigo) {
             $entity = $this->getService()->find($codigo);
-            if (!$entity)
+            if (!$entity) {
                 throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
-        } else
+            }
+        } else {
             throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
+        }
         $form->bind($entity);
         $form->setData($data);
 
@@ -97,11 +101,12 @@ abstract class BaseController extends RoutesActionController {
     public function create($form) {
         $formName = $form->getName();
         $data = $this->params()->fromPost();
-        if (!empty($formName) && $form->wrapElements())
+        if (!empty($formName) && $form->wrapElements()) {
             $data = $data[$formName];
+        }
         $form->setData($data);
         if ($form->isValid()) {
-            $entity = $this->getService()->create($entity);
+            $entity = $this->getService()->create($form->getObject());
             $this->setEntity($entity);
             return true;
         }
@@ -115,10 +120,11 @@ abstract class BaseController extends RoutesActionController {
     public function novoAction() {
         if ($this->getRequest()->isPost()) {
             try {
-                if ($this->create($this->getFormCreate()))
+                if ($this->create($this->getFormCreate())) {
                     $this->flashMessenger()->addMessage([
                         'info' => "<strong>" . $this->getTranslator()->translate('s_created') . "</strong>"
                     ]);
+                }
             } catch (\Exception $ex) {
                 $this->flashMessenger()->addMessage([
                     'error' => "<strong>" . $this->getTranslator()->translate('e_not_created') . "</strong> ->" . $ex->getMessage()
@@ -127,9 +133,9 @@ abstract class BaseController extends RoutesActionController {
             }
             if ($this->getEntity()) {
                 $result = $this->triggerRoutesAction($this->getFormCreate()->get('formActions')->getSubmitValue()->getValue());
-                if ($result)
+                if ($result) {
                     return $result;
-                else {
+                } else {
                     $this->getFormCreate()->bind(new get_class($this->getFormCreate()->getObject()));
                 }
             }
@@ -143,26 +149,30 @@ abstract class BaseController extends RoutesActionController {
         $codigo = $this->getEvent()->getRouteMatch()->getParam($this->getIdentifierName());
         if ($codigo != null) {
             $registro = $this->getService()->find($codigo);
-            if ($registro == null)
+            if ($registro == null) {
                 throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
+            }
             $form->bind($registro);
-        } else
+        } else {
             throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
+        }
     }
 
     public function editarAction() {
         if ($this->getRequest()->isPost()) {
             try {
                 $result = $this->updateOrCreate($this->getFormUpdate());
-                if ($result)
-                    if ($result == 1)
+                if ($result) {
+                    if ($result == 1) {
                         $this->flashMessenger()->addMessage([
                             'info' => "<strong>" . $this->getTranslator()->translate('s_updated') . "</strong>"
                         ]);
-                    else
+                    } else {
                         $this->flashMessenger()->addMessage([
                             'info' => "<strong>" . $this->getTranslator()->translate('s_created') . "</strong>"
                         ]);
+                    }
+                }
             } catch (\Exception $ex) {
                 $this->flashMessenger()->addMessage([
                     'error' => "<strong>" . $this->getTranslator()->translate('e_not_updated') . "</strong> ->" . $ex->getMessage()
