@@ -2,17 +2,17 @@
 <html lang="pt-br">
     <head>
         <meta charset="utf-8">
-        {{ headTitle(translate('Sistema')).setSeparator(' - ').setAutoEscape(false)|raw }}
+        {{ headTitle(translate('System')).setSeparator(' - ').setAutoEscape(false)|raw }}
         {{ headMeta().appendName('viewport', 'width=device-width, initial-scale=1.0')|raw }}
 
         <!-- Le styles -->
-        {{ headLink({rel : 'shortcut icon', type : 'image/vnd.microsoft.icon', href : basePath() ~ '/public/img/favicon.ico'})
-            .prependStylesheet(basePath() ~ '/public/css/app/style.css')
+        {{ headLink({rel : 'shortcut icon', type : 'image/vnd.microsoft.icon', href : basePath() ~ '/img/favicon.ico'})
+            .prependStylesheet(basePath() ~ '/css/app/style.css')
             .prependStylesheet(basePath() ~ '/bower_components/bootstrap/dist/css/bootstrap.min.css')|raw
         }}
 
         {% do headScript().setAllowArbitraryAttributes(true) %}
-        {{ headScript().prependFile(basePath() ~ '/public/bower_components/html5shiv/dist/html5shiv.js',
+        {{ headScript().prependFile(basePath() ~ '/bower_components/html5shiv/dist/html5shiv.js',
                                     'text/javascript',{conditional : 'lt IE 9' })|raw }}
     </head>
     <body>
@@ -25,11 +25,11 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="{{ url('usuario-admin/default') }}">JS Sistema</a>
+                    <a class="navbar-brand" href="{{ url('cliente-admin/default') }}">System</a>
                 </div>
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
-                        {% set partial = ['layout/navigation', 'default']
+                        {% set partial = ['layoutjs/navigation', 'default']
                         %}
                         {% do navigation('navigation').menu().setPartial(partial) %}
                         {{ navigation('navigation').menu().render()|raw }}
@@ -54,7 +54,7 @@
                 </div>
             </div>
         </nav>
-        <div id='container' class="container col-lg-12">
+        <div id='container' class="container">
             <div class='row'>
                 <div id='content' class='col-md-12'>{{ content|raw }}</div>
             </div>
