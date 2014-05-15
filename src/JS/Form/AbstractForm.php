@@ -16,6 +16,7 @@ class AbstractForm extends Form implements ObjectManagerAwareInterface {
 
         $this->setObjectManager($objectManager);
         $this->setHydrator(new DoctrineObject($objectManager));
+        $this->setAttribute('method', 'post');
     }
 
     public function getObjectManager() {
