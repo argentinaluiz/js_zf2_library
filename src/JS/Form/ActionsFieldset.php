@@ -78,7 +78,8 @@ class ActionsFieldset extends Fieldset {
             'attributes' => [
                 'class' => 'btn btn-danger',
                 'title' => 'Excluir',
-                'data-ng-delete' => "optionsDelete",
+                'data-ng-delete' => '',
+                'data-ng-model' => "optionsDelete"
             ],
             'options' => [
                 'label' => "",
