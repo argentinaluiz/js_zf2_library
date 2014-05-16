@@ -36,12 +36,19 @@ return [
             ],
         ],
     ],
+    'filters' => [
+        'invokables' => [
+            'JSDate' => 'JS\Filter\JSDate',
+            'JSDiacritic' => 'JS\Filter\JSDiacritic',
+            'JSNumberFormat' => 'JS\Filter\JSNumberFormat'
+        ]
+    ],
     'validators' => [
         'invokables' => [
-            'JS\Validator\JSInt' => 'JS\Validator\JSInt',
-            'JS\Validator\JSFloat' => 'JS\Validator\JSFloat',
-            'JS\Validator\Cpf' => 'JS\Validator\Cpf',
-            'JS\Validator\Cnpj' => 'JS\Validator\Cnpj',
+            'JSInt' => 'JS\Validator\JSInt',
+            'JSFloat' => 'JS\Validator\JSFloat',
+            'JSCpf' => 'JS\Validator\Cpf',
+            'JSCnpj' => 'JS\Validator\Cnpj',
             'JSNotEmpty' => 'JS\Validator\JSNotEmpty'
         ]
     ],
