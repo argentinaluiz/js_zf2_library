@@ -17,9 +17,7 @@ abstract class JSTestControllerCase extends AbstractHttpControllerTestCase {
         $password = $params['password'];
         $dbname = $params['dbname'];
         $dbh = new \PDO("mysql:host=$host", $user, $password);
-        if (!$dbh->exec("CREATE DATABASE IF NOT EXISTS `$dbname` CHARACTER SET utf8 COLLATE utf8_general_ci;")) {
-            throw new \Exception(print_r($dbh->errorInfo(), true));
-        }
+        $dbh->exec("CREATE DATABASE IF NOT EXISTS `$dbname` CHARACTER SET utf8 COLLATE utf8_general_ci;");
         $dbh = null;
     }
 
