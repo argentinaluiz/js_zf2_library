@@ -12,7 +12,7 @@ use Zend\Filter\AbstractFilter;
 use \Zend_Locale;
 use \Zend_Locale_Format;
 
-class Number extends AbstractFilter {
+class NumberToLocalized extends AbstractFilter {
 
     /**
      * Filtra o numero pra o formato brasileiro, se for americano,

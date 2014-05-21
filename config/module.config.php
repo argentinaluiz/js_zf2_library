@@ -40,7 +40,8 @@ return [
         'invokables' => [
             'JSDate' => 'JS\Filter\JSDate',
             'JSDiacritic' => 'JS\Filter\JSDiacritic',
-            'JSNumberFormat' => 'JS\Filter\JSNumberFormat'
+            'JSNumberFormat' => 'JS\Filter\JSNumberFormat',
+            'JSNumberToLocalized' => 'JS\Filter\JSNumberToLocalized'
         ]
     ],
     'validators' => [
