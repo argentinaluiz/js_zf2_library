@@ -41,7 +41,7 @@ return [
             'JSDate' => 'JS\Filter\JSDate',
             'JSDiacritic' => 'JS\Filter\JSDiacritic',
             'JSNumberFormat' => 'JS\Filter\JSNumberFormat',
-            'JSNumberToLocalized' => 'JS\Filter\JSNumberToLocalized'
+            'JSNumberToLocalized' => 'JS\Filter\NumberToLocalized'
         ]
     ],
     'validators' => [
