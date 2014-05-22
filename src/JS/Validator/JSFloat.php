@@ -74,7 +74,7 @@ class JSFloat extends AbstractValidator {
      */
     public function isValid($value) {
         if (!is_string($value) && !is_int($value) && !is_float($value)) {
-            $this->setValue(self::INVALID);
+            $this->error(self::INVALID);
             return false;
         }
 
@@ -85,11 +85,11 @@ class JSFloat extends AbstractValidator {
         $this->setValue($value);
         try {
             if (!Zend_Locale_Format::isFloat($value, ['locale' => $this->locale])) {
-                $this->setValue(self::NOT_FLOAT);
+                $this->error(self::NOT_FLOAT);
                 return false;
             }
         } catch (Zend_Locale_Exception $e) {
-            $this->setValue(self::NOT_FLOAT);
+            $this->error(self::NOT_FLOAT);
             return false;
         }
 
