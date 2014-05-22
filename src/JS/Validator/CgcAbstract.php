@@ -40,9 +40,9 @@ abstract class CgcAbstract extends AbstractValidator {
      * @var string
      */
     protected $messageTemplates = [
-        self::SIZE => "'%value%' não possui tamanho esperado",
-        self::EXPANDED => "'%value%' não possui um formato aceitável",
-        self::DIGIT => "'%value%' não é um documento válido"
+        self::SIZE => "'%value%' não possui tamanho esperado.",
+        self::EXPANDED => "'%value%' não possui um formato aceitável.",
+        self::DIGIT => "'%value%' não é um documento válido."
     ];
 
     /**
