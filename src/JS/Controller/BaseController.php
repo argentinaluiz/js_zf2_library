@@ -136,7 +136,8 @@ abstract class BaseController extends RoutesActionController {
                 if ($result) {
                     return $result;
                 } else {
-                    $this->getFormCreate()->bind(new get_class($this->getFormCreate()->getObject()));
+                    $className = get_class($this->getFormCreate()->getObject());
+                    $this->getFormCreate()->bind(new $className);
                 }
             }
         }
