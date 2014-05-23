@@ -30,7 +30,7 @@ abstract class JSTestControllerCase extends AbstractHttpControllerTestCase {
         parent::tearDown();
     }
 
-    public function getController($controllerClass, $controllerName, $action) {
+    public function getController($controllerClass, $controllerName, $action, $params = []) {
         $config = $this->getConfig();
         $controller = $this->getServiceManager()->get('ControllerLoader')->get($controllerClass);
         $event = new MvcEvent();
@@ -38,7 +38,7 @@ abstract class JSTestControllerCase extends AbstractHttpControllerTestCase {
         $router = TreeRouteStack::factory($routerConfig);
 
         $event->setRouter($router);
-        $event->setRouteMatch(new RouteMatch(['controller' => $controllerName, 'action' => $action]));
+        $event->setRouteMatch(new RouteMatch(['controller' => $controllerName, 'action' => $action] + $params));
         $controller->setEvent($event);
         return $controller;
     }
