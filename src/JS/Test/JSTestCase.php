@@ -7,34 +7,22 @@ class JSTestCase extends \PHPUnit_Framework_TestCase {
     /**
      * @var \Zend\Mvc\Application
      */
-    protected $application;
+    protected static $application;
 
-    use JSZendFunctionsTrait;
+    use JSZendFunctionsStaticTrait;
 
     public static function setUpBeforeClass() {
         JSDatabaseTest::createDataBase();
-        parent::setUpBeforeClass();
+        self::setApplicationInstance((new JSBootstrap())->getBootstrap());
+        JSDatabaseTest::createTables(self::getEntityManager());
     }
 
     public static function tearDownAfterClass() {
         JSDatabaseTest::dropDatabase();
-        parent::tearDownAfterClass();
-    }
-
-    protected function setUp() {
-        $bootstrap = new JSBootstrap();
-        $this->application = $bootstrap->getBootstrap();
-        $this->setApplicationInstance($this->application);
-        JSDatabaseTest::createTables($this->getEntityManager());
-        parent::setUp();
-    }
-
-    protected function tearDown() {
-        parent::tearDown();
     }
 
     public function getApplication() {
-        return $this->application;
+        return self::$applicationInstance;
     }
 
 }

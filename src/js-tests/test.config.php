@@ -11,12 +11,13 @@ return [
         'Application',
         'DoctrineModule',
         'DoctrineORMModule',
+        'DoctrineDataFixtureModule',
         'ZfcTwig',
         'TwbBundle',
+        'AssetManager',
+        'RdnRequireJS',
+        'JSDataTables',
         'JS',
-    /*
-     * Other Modules
-     */
     ],
     'module_listener_options' => [
         'module_paths' => [
@@ -24,8 +25,11 @@ return [
             './vendor'
         ],
         'config_glob_paths' => [
-            'config/autoload/{,*.}{global,local}.php',
+            //'config/autoload/{,*.}{global,local}.php',
             __DIR__ . '/autoload/doctrine.test.php',
+            __DIR__ . '/autoload/global.php',
+            __DIR__ . '/autoload/js.global.php',
+            __DIR__ . '/autoload/local.php',
         ]
     ],
 ];

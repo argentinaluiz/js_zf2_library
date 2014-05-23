@@ -9,24 +9,21 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
 abstract class JSTestControllerCase extends AbstractHttpControllerTestCase {
 
-
     use JSZendFunctionsTrait;
 
     public static function setUpBeforeClass() {
         JSDatabaseTest::createDataBase();
-        parent::setUpBeforeClass();
     }
 
     public static function tearDownAfterClass() {
         JSDatabaseTest::dropDatabase();
-        parent::tearDownAfterClass();
     }
 
     protected function setUp() {
         $this->setApplicationConfig(JSBootstrap::getConfig());
+        parent::setUp();
         $this->setApplicationInstance($this->getApplication());
         JSDatabaseTest::createTables($this->getEntityManager());
-        parent::setUp();
     }
 
     protected function tearDown() {

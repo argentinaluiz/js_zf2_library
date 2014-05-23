@@ -36,15 +36,18 @@ class JSDatabaseTest {
         $dbh = null;
     }
 
-    public static function createTables($entityManager) {
+    public static function createTables(EntityManager $entityManager) {
 
-        $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($entityManager);
+        $tables = $entityManager->getConnection()->getSchemaManager()->listTables();
+        if (count($tables) == 0) {
+            $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($entityManager);
 
-        $cmf = $entityManager->getMetadataFactory();
-        $classes = $cmf->getAllMetadata();
+            $cmf = $entityManager->getMetadataFactory();
+            $classes = $cmf->getAllMetadata();
 
-        $schemaTool->dropDatabase();
-        $schemaTool->createSchema($classes);
+            $schemaTool->dropDatabase();
+            $schemaTool->createSchema($classes);
+        }
     }
 
 }
