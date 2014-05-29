@@ -33,6 +33,7 @@ class BaseServiceFactory implements FactoryInterface {
         if ($this->textDomain)
             $translator->setTextDomain($this->textDomain);
         $service = new $this->service($entityManager, $translator, $this->entityName);
+        $service->setServiceLocator($serviceLocator);
         return $service;
     }
 
