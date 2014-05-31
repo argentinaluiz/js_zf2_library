@@ -7,7 +7,7 @@ use JS\Exception\BaseException;
 use JS\Service\BaseServiceInterface;
 use Zend\I18n\Translator\TranslatorInterface;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use \Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\ServiceLocatorInterface;
 use Doctrine\ORM\UnitOfWork;
 
 class BaseService implements BaseServiceInterface, ServiceLocatorAwareInterface {
