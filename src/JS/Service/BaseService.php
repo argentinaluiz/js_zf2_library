@@ -6,9 +6,11 @@ use Doctrine\ORM\EntityManager;
 use JS\Exception\BaseException;
 use JS\Service\BaseServiceInterface;
 use Zend\I18n\Translator\TranslatorInterface;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use \Zend\ServiceManager\ServiceLocatorInterface;
 use Doctrine\ORM\UnitOfWork;
 
-class BaseService implements BaseServiceInterface {
+class BaseService implements BaseServiceInterface, ServiceLocatorAwareInterface {
 
     protected $entity;
     protected $entityName;
@@ -19,6 +21,7 @@ class BaseService implements BaseServiceInterface {
      */
     protected $entityManager;
     protected $translator;
+    protected $serviceLocator;
 
     /**
      * Set up base BaseService options
@@ -167,6 +170,14 @@ class BaseService implements BaseServiceInterface {
     public function setTranslator(TranslatorInterface $translator) {
         $this->translator = $translator;
         return $this;
+    }
+
+    public function getServiceLocator() {
+        return $this->serviceLocator;
+    }
+
+    public function setServiceLocator(ServiceLocatorInterface $serviceLocator) {
+        $this->serviceLocator = $serviceLocator;
     }
 
 }
