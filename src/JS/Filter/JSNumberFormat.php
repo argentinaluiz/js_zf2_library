@@ -18,12 +18,12 @@ class JSNumberFormat extends AbstractFilter {
 
     /**
      * Construtor
-     * @param array $options Opcoes com parametros 'locale'[,'precision']
      * key precision é facultativo
      * array(
      *  'locale' => 'pt_BR',
      *  'precision' => 2
      * )
+     * @param array $options Opcoes com parametros 'locale'[,'precision']
      */
     public function __construct($options = []) {
         $this->setOptions($options);
@@ -31,8 +31,8 @@ class JSNumberFormat extends AbstractFilter {
 
     /**
      * Atribuir o locale
-     * @param string|\Zend_Locale $locale local para conversão
      * 'pt_BR' ou new \Zend_Locale('pt_BR')
+     * @param string|\Zend_Locale $locale local para conversão
      */
     public function setLocale($locale) {
         $this->options['locale'] = $locale;
@@ -45,26 +45,37 @@ class JSNumberFormat extends AbstractFilter {
      * @return string
      */
     public function getLocate() {
-        return Zend_Locale::findLocale(isset($this->options['locale']) ? $this->options['locale'] : null);
+        return Zend_Locale::findLocale(isset($this->options['locale']) ? $this->options['locale'] : 'pt_BR');
     }
 
     /**
      * Atribuir o numero de casas decimais
-     * @param int $precision numero de casais decimais
      * Se o $precision for null ou nao for inteiro ele nao e atribuido
+     * @param int $precision numero de casais decimais
      */
     public function setPrecision($precision = null) {
-        if ($precision != null && is_int($precision))
+        if ($precision != null && is_int($precision)) {
             $this->options['precision'] = $precision;
+        }
     }
 
     /**
      * Pegar o precision
-     * @param int $precision
      * Se o precision nao existir retorna null
+     * @param int $precision
      */
     public function getPrecision() {
         return isset($this->options['precision']) ? (int) $this->options['precision'] : null;
+    }
+
+    public function setNumberFormat($numberFormat) {
+        if ($numberFormat != null) {
+            $this->options['number_format'] = $numberFormat;
+        }
+    }
+
+    public function getNumberFormat() {
+        return isset($this->options['number_format']) ? (int) $this->options['number_format'] : null;
     }
 
     /**

@@ -52,8 +52,9 @@ class NumberToLocalized extends AbstractFilter {
      * Se o $precision for null ou nao for inteiro ele nao e atribuido
      */
     public function setPrecision($precision = null) {
-        if ($precision != null && is_int($precision))
+        if ($precision != null && is_int($precision)) {
             $this->options['precision'] = $precision;
+        }
     }
 
     /**
@@ -65,22 +66,21 @@ class NumberToLocalized extends AbstractFilter {
         return isset($this->options['precision']) ? (int) $this->options['precision'] : null;
     }
 
+    public function setNumberFormat($numberFormat) {
+        if ($numberFormat != null) {
+            $this->options['number_format'] = $numberFormat;
+        }
+    }
+
+    public function getNumberFormat() {
+        return isset($this->options['number_format']) ? (int) $this->options['number_format'] : null;
+    }
+
     /**
-     * Filtra o numero pra o formato brasileiro, se for americano,
-     * senao pra brasileiro
      * @param string $value Numero americano ou brasileiro para ser convertido
      */
     public function filter($value) {
-        /*
-         * Se o numero não for da moeda em questao, pode estar vindo do db
-         */
-        if (!Zend_Locale_Format::isNumber($value, $this->options)) {
-            return Zend_Locale_Format::toNumber($value, $this->options);
-        } else {
-            /* Se o numero for da moeda em questao, pode estar vindo do front-end */
-            return Zend_Locale_Format::getNumber($value, $this->options);
-        }
-        return $value;
+        return Zend_Locale_Format::getNumber($value, $this->options);
     }
 
 }
