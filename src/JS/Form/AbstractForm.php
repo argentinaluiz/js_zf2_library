@@ -4,7 +4,7 @@ namespace JS\Form;
 
 use Zend\Form\Form;
 use Doctrine\Common\Persistence\ObjectManager;
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+use JS\Stdlib\Hydrator\JSDoctrineObject;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 
 class AbstractForm extends Form implements ObjectManagerAwareInterface {
@@ -15,7 +15,7 @@ class AbstractForm extends Form implements ObjectManagerAwareInterface {
         parent::__construct($name, $options);
 
         $this->setObjectManager($objectManager);
-        $this->setHydrator(new DoctrineObject($objectManager));
+        $this->setHydrator(new JSDoctrineObject($objectManager));
         $this->setAttribute('method', 'post');
     }
 

@@ -4,7 +4,7 @@ namespace JS\Form;
 
 use Zend\Form\Fieldset;
 use Doctrine\Common\Persistence\ObjectManager;
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+use JS\Stdlib\Hydrator\JSDoctrineObject;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 
 abstract class AbstractFieldset extends Fieldset implements ObjectManagerAwareInterface {
@@ -15,7 +15,7 @@ abstract class AbstractFieldset extends Fieldset implements ObjectManagerAwareIn
         parent::__construct($name, $options);
 
         $this->setObjectManager($objectManager);
-        $this->setHydrator(new DoctrineObject($objectManager));
+        $this->setHydrator(new JSDoctrineObject($objectManager));
     }
 
     public function getObjectManager() {
