@@ -30,9 +30,10 @@ class BaseServiceFactory implements FactoryInterface {
     public function createService(ServiceLocatorInterface $serviceLocator) {
         $entityManager = $serviceLocator->get('doctrine.entitymanager.orm_default');
         $translator = $serviceLocator->get('jstranslator');
-        if ($this->textDomain)
-            $translator->setTextDomain($this->textDomain);
-        $service = new $this->service($entityManager, $translator, $this->entityName);
+        $service = new $this->service($entityManager, $translator, $this->getEntityName());
+        if ($this->getTextDomain()) {
+            $service->setTextDomain($this->getTextDomain());
+        }
         $service->setServiceLocator($serviceLocator);
         return $service;
     }

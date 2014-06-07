@@ -21,6 +21,7 @@ class BaseService implements BaseServiceInterface, ServiceLocatorAwareInterface 
      */
     protected $entityManager;
     protected $translator;
+    protected $textDomain = 'js';
     protected $serviceLocator;
 
     /**
@@ -93,10 +94,14 @@ class BaseService implements BaseServiceInterface, ServiceLocatorAwareInterface 
                 $this->getEntityManager()->flush();
                 return $this->entity;
             }
-            throw new BaseException($this->getTranslator()->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
+            throw new BaseException($this->translate('e_entity_not_found'), BaseException::ERROR_ENTITY_NOT_EXIST);
         } catch (\Exception $ex) {
             $this->chooseHandleException($ex);
         }
+    }
+
+    public function translate($message) {
+        return $this->getTranslator()->translate($message, $this->textDomain);
     }
 
     /**
@@ -115,7 +120,7 @@ class BaseService implements BaseServiceInterface, ServiceLocatorAwareInterface 
     public function handlePDOException(\Exception $exception) {
         switch ($exception->getPrevious()->errorInfo[1]) {
             case 1451:
-                throw new BaseException($this->getTranslator()->translate('e_pdo_1451'), BaseException::PDO_ERROR_DELETE_REGISTRO, $exception);
+                throw new BaseException($this->translate('e_pdo_1451'), BaseException::PDO_ERROR_DELETE_REGISTRO, $exception);
             default :
                 throw $exception;
         }
@@ -178,6 +183,15 @@ class BaseService implements BaseServiceInterface, ServiceLocatorAwareInterface 
 
     public function setServiceLocator(ServiceLocatorInterface $serviceLocator) {
         $this->serviceLocator = $serviceLocator;
+    }
+
+    public function getTextDomain() {
+        return $this->textDomain;
+    }
+
+    public function setTextDomain($textDomain) {
+        $this->textDomain = $textDomain;
+        return $this;
     }
 
 }

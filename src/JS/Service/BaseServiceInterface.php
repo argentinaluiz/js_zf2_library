@@ -19,6 +19,8 @@ interface BaseServiceInterface {
 
     public function remove($codigo);
 
+    public function translate($message);
+
     public function getEntityManager();
 
     public function setEntityManager(EntityManager $entityManager);
@@ -30,4 +32,8 @@ interface BaseServiceInterface {
     public function getTranslator();
 
     public function setTranslator(TranslatorInterface $translator);
+
+    public function setTextDomain($textDomain);
+
+    public function getTextDomain();
 }
