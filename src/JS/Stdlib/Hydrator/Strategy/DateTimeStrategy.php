@@ -8,7 +8,7 @@ class DateTimeStrategy extends DefaultStrategy {
 
     public function extract($value) {
         if ($value instanceof \DateTime) {
-            $value = $value->format('Y-m-d');
+            $value = $value->format('d/m/Y');
         }
         return $value;
     }
