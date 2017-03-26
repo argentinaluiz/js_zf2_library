@@ -2,7 +2,7 @@
 
 namespace JS\Validator;
 
-class Cpf extends CgcAbstract {
+class Cpf extends DocumentAbstract {
 
     /**
      * Tamanho do Campo
