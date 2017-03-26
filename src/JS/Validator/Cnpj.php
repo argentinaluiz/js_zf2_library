@@ -7,7 +7,7 @@ namespace JS\Validator;
  *
  * @author Luiz Carlos
  */
-class Cnpj extends CgcAbstract {
+class Cnpj extends DocumentAbstract {
 
     /**
      * Tamanho do Campo
