@@ -8,7 +8,7 @@ use Zend\Validator\AbstractValidator;
  * Classe CgcAbstract para validar tanto cpf quanto cnpj.
  * Existem no pacote as classes Cpf e Cnpj que a extendem.
  */
-abstract class CgcAbstract extends AbstractValidator {
+abstract class DocumentAbstract extends AbstractValidator {
 
     /**
      * Tamanho Inválido
