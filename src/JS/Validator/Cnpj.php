@@ -3,7 +3,7 @@
 namespace JS\Validator;
 
 /**
- * Description of Cgc
+ * Description of Cnpj
  *
  * @author Luiz Carlos
  */
